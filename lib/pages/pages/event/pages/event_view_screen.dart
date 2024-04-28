@@ -17,6 +17,28 @@ class EventViewScreen extends StatefulWidget {
 class _EventViewScreenState extends State<EventViewScreen> {
   final ThemeState themeController = Get.put(ThemeState());
   final AuthState authController = Get.put(AuthState());
+  bool _isPageLoading = true;
+
+  @override
+  void initState() {
+    _isPageLoading = true;
+    super.initState();
+    print('EventViewScreen: ${widget.id}');
+    getEventInfo();
+  }
+
+  Future<void> getEventInfo() async {
+    // Get event info from API
+    setState(() {
+      _isPageLoading = true;
+    });
+
+    await Future.delayed(const Duration(seconds: 5));
+
+    setState(() {
+      _isPageLoading = false;
+    });
+  }
 
   Future<void> joining() async {
     showModalBottomSheet(
@@ -30,6 +52,7 @@ class _EventViewScreenState extends State<EventViewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isPageLoading == true) return const Center(child: CircularProgressIndicator());
     return Scaffold(
       body: Container(
         width: MediaQuery.of(context).size.width,

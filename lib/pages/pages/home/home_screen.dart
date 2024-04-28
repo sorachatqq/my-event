@@ -1,7 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import '../../../utils/models/model_event.dart';
@@ -80,6 +77,12 @@ class _HomeScreenState extends State<HomeScreen> {
     init();
   }
 
+  @override
+  void dispose() {
+    locationController.dispose();
+    super.dispose();
+  }
+
   init() async {
     getLocation();
   }
@@ -88,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _isLocationLoading = true;
     });
-    Position lastPosition = await locationController.load();
+    await locationController.load();
     setState(() {
       _isLocationLoading = false;
     });

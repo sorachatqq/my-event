@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../utils/models/model_event.dart';
+import '../../../utils/state/location_state.dart';
 import '../../../utils/state/theme_state.dart';
 import 'components/button_home.dart';
 import '../../../utils/components/event_widget.dart';
@@ -18,6 +19,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final ThemeState themeController = Get.put(ThemeState());
+  final LocationState locationController = Get.put(LocationState());
   List<EventModel> events = [
     EventModel(
         id: "1",
@@ -71,6 +73,23 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    init();
+  }
+
+  init() async {
+    getLocation();
+  }
+
+  Future<void> getLocation() async {
+    Position lastPosition = await locationController.load();
+    print('getLocation');
+    print(lastPosition.latitude);
+    print(lastPosition.longitude);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
@@ -102,17 +121,36 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
-                      InkWell(
-                        onTap: () {
-                          themeController
-                              .switchTheme(!themeController.isDarkMode.value);
-                        },
-                        child: Text(
-                          'อีเว้นท์ใกล้ฉัน',
-                          style: TextStyle(
-                              fontSize: 30, fontWeight: FontWeight.bold),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            themeController
+                                .switchTheme(!themeController.isDarkMode.value);
+                          },
+                          child: Text(
+                            'อีเว้นท์ใกล้ฉัน',
+                            maxLines: 1,
+                            style: TextStyle(
+                                fontSize: 30, fontWeight: FontWeight.bold),
+                          ),
                         ),
-                      )
+                      ),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            themeController
+                                .switchTheme(!themeController.isDarkMode.value);
+                          },
+                          child: Obx(
+                            () => Text(
+                              '${locationController.currentLocation.value.latitude},${locationController.currentLocation.value.longitude}',
+                              maxLines: 1,
+                              style: TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   SizedBox(

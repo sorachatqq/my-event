@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>My Event Flutter</string>
+	<string>My Event</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>my_event_flutter</string>
+	<string>my_event</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -28,23 +28,6 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<key>NSCameraUsageDescription</key>
-	<string>This app needs camera access to scan QR codes</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This application requests access to your location when using a maps.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This application requests access to your location to find dormitory service near you.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This application requests access to your location to find dormitory service near you.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Allow this app to add this photos</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This application requested access to your Photos to save image to your gallery</string>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>sms</string>
-		<string>tel</string>
-	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

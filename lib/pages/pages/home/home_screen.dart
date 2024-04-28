@@ -92,9 +92,6 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _isLocationLoading = false;
     });
-    print('getLocation');
-    print(lastPosition.latitude);
-    print(lastPosition.longitude);
   }
 
   @override
@@ -115,8 +112,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           context.push(context.namedLocation('profile'));
                         },
                         child: Container(
-                          margin: EdgeInsets.only(right: 16),
-                          child: CircleAvatar(
+                          margin: const EdgeInsets.only(right: 16),
+                          child: const CircleAvatar(
                             radius: 25,
                             backgroundColor: Color(0xffD9D9D9),
                             child: Text(
@@ -135,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             themeController
                                 .switchTheme(!themeController.isDarkMode.value);
                           },
-                          child: Text(
+                          child: const Text(
                             'อีเว้นท์ใกล้ฉัน',
                             maxLines: 1,
                             style: TextStyle(
@@ -153,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             () => Text(
                               '${locationController.currentLocation.value.latitude},${locationController.currentLocation.value.longitude}',
                               maxLines: 1,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 12, fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -161,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Row(
@@ -171,13 +168,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: ButtonHome(
                           icons: Icons.filter_alt,
                           borderRadius: 10,
-                          bg: Color(0xff797979),
-                          shadow: Color.fromARGB(255, 82, 82, 82),
+                          bg: const Color(0xff797979),
+                          shadow: const Color.fromARGB(255, 82, 82, 82),
                           text: 'ค้นหาตามหมวดหมู่',
                           onTap: () {},
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 15,
                       ),
                       Expanded(
@@ -188,24 +185,25 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: ButtonHome(
                                 icons: Icons.edit_square,
                                 borderRadius: 10,
-                                bg: Color(0xff27AE4D),
-                                shadow: Color.fromARGB(255, 28, 126, 56),
+                                bg: const Color(0xff27AE4D),
+                                shadow: const Color.fromARGB(255, 28, 126, 56),
                                 text: 'เพิ่มอีเว้นท์',
                                 onTap: () {
+                                  print('redirecting to: add event page');
                                   context.push(context.namedLocation('event',
                                       pathParameters: {"id": 'add'}));
                                 },
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 5,
                             ),
                             Expanded(
                               child: ButtonHome(
                                 icons: Icons.search,
                                 borderRadius: 10,
-                                bg: Color(0xff274DAE),
-                                shadow: Color.fromARGB(255, 29, 58, 130),
+                                bg: const Color(0xff274DAE),
+                                shadow: const Color.fromARGB(255, 29, 58, 130),
                                 text: 'ค้นหาใหม่',
                                 isLoading: _isLocationLoading,
                                 onTap: () {

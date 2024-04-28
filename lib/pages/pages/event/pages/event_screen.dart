@@ -24,8 +24,8 @@ class EventScreen extends StatefulWidget {
 
 class _EventScreenState extends State<EventScreen> {
   final ThemeState themeController = Get.put(ThemeState());
-  TextEditingController nameController = new TextEditingController();
-  TextEditingController detailController = new TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController detailController = TextEditingController();
   late final MapController _mapController;
 
   int activeStep = 0;
@@ -78,7 +78,7 @@ class _EventScreenState extends State<EventScreen> {
                             },
                             child: Text(
                               '${widget.id == 'add' ? 'เพิ่ม' : 'แก้ไข'}อีเว้นท์',
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 30, fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -87,8 +87,8 @@ class _EventScreenState extends State<EventScreen> {
                           flex: 2,
                           child: ButtonEvent(
                             borderRadius: 8,
-                            bg: Color(0xff797979),
-                            shadow: Color.fromARGB(255, 82, 82, 82),
+                            bg: const Color(0xff797979),
+                            shadow: const Color.fromARGB(255, 82, 82, 82),
                             text: 'กลับหน้าหลัก',
                             onTap: () {
                               context.pop();
@@ -99,11 +99,11 @@ class _EventScreenState extends State<EventScreen> {
                     ),
                   ),
                 ),
-                Container(
+                SizedBox(
                   height: 60,
                   child: EasyStepper(
                     activeStep: activeStep,
-                    lineStyle: LineStyle(
+                    lineStyle: const LineStyle(
                       lineLength: 90,
                       lineThickness: 3,
                       lineWidth: 0,
@@ -111,20 +111,20 @@ class _EventScreenState extends State<EventScreen> {
                       defaultLineColor: Color(0xffD9D9D9),
                       finishedLineColor: Color(0xff4ECB01),
                     ),
-                    activeStepBackgroundColor: Color(0xff4ECB01),
-                    activeStepBorderColor: Color(0xff4ECB01),
+                    activeStepBackgroundColor: const Color(0xff4ECB01),
+                    activeStepBorderColor: const Color(0xff4ECB01),
 
                     // internalPadding: 0,
                     stepRadius: 20,
                     borderThickness: 0,
 
                     showStepBorder: false,
-                    finishedStepBorderColor: Color(0xff4ECB01),
-                    finishedStepBackgroundColor: Color(0xff4ECB01),
-                    activeStepIconColor: Color(0xff4ECB01),
+                    finishedStepBorderColor: const Color(0xff4ECB01),
+                    finishedStepBackgroundColor: const Color(0xff4ECB01),
+                    activeStepIconColor: const Color(0xff4ECB01),
                     showLoadingAnimation: false,
                     steps: [
-                      EasyStep(
+                      const EasyStep(
                         customStep: Text(
                           '1',
                           style: TextStyle(
@@ -137,9 +137,9 @@ class _EventScreenState extends State<EventScreen> {
                         customStep: CircleAvatar(
                           // radius: 8,
                           backgroundColor: activeStep >= 1
-                              ? Color(0xff4ECB01)
-                              : Color(0xffD9D9D9),
-                          child: Text(
+                              ? const Color(0xff4ECB01)
+                              : const Color(0xffD9D9D9),
+                          child: const Text(
                             '2',
                             style: TextStyle(
                                 color: Colors.white,
@@ -153,9 +153,9 @@ class _EventScreenState extends State<EventScreen> {
                         customStep: CircleAvatar(
                           // radius: 8,
                           backgroundColor: activeStep >= 2
-                              ? Color(0xff4ECB01)
-                              : Color(0xffD9D9D9),
-                          child: Icon(
+                              ? const Color(0xff4ECB01)
+                              : const Color(0xffD9D9D9),
+                          child: const Icon(
                             Icons.check,
                             color: Colors.white,
                           ),
@@ -166,7 +166,7 @@ class _EventScreenState extends State<EventScreen> {
                         setState(() => activeStep = index),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 ),
               ],
@@ -188,14 +188,14 @@ class _EventScreenState extends State<EventScreen> {
                         if (activeStep == 0)
                           Column(
                             children: [
-                              Container(
+                              InkWell(child: Container(
                                 height: 200,
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                   color: Color(0xffEDEDED),
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(15)),
                                 ),
-                                child: Center(
+                                child: const Center(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
@@ -215,11 +215,11 @@ class _EventScreenState extends State<EventScreen> {
                                     ],
                                   ),
                                 ),
-                              ),
-                              SizedBox(
+                              )),
+                              const SizedBox(
                                 height: 10,
                               ),
-                              Row(
+                              const Row(
                                 children: [
                                   Text(
                                     'รายละเอียด',
@@ -241,7 +241,7 @@ class _EventScreenState extends State<EventScreen> {
                                 hintText: 'คำอธิบายอีเว้นท์อีเว้นท์',
                                 obscureText: false,
                               ),
-                              Row(
+                              const Row(
                                 children: [
                                   Text(
                                     'สถานที่',
@@ -256,14 +256,14 @@ class _EventScreenState extends State<EventScreen> {
                                   Container(
                                     height: 200,
                                     width: MediaQuery.of(context).size.width,
-                                    decoration: BoxDecoration(
+                                    decoration: const BoxDecoration(
                                       // color: Color(0xffEDEDED),
                                       borderRadius:
                                           BorderRadius.all(Radius.circular(15)),
                                     ),
                                     child: ClipRRect(
                                       borderRadius:
-                                          BorderRadius.all(Radius.circular(15)),
+                                          const BorderRadius.all(Radius.circular(15)),
                                       child: FlutterMap(
                                         mapController: _mapController,
                                         options: MapOptions(
@@ -282,7 +282,7 @@ class _EventScreenState extends State<EventScreen> {
                                             userAgentPackageName:
                                                 'dev.fleaflet.flutter_map.example',
                                           ),
-                                          MarkerLayer(
+                                          const MarkerLayer(
                                             markers: [],
                                           ),
                                         ],
@@ -302,13 +302,13 @@ class _EventScreenState extends State<EventScreen> {
                                             decoration: BoxDecoration(
                                               color:
                                                   Colors.white.withOpacity(0.5),
-                                              borderRadius: BorderRadius.only(
+                                              borderRadius: const BorderRadius.only(
                                                 bottomRight:
                                                     Radius.circular(15),
                                                 bottomLeft: Radius.circular(15),
                                               ),
                                             ),
-                                            child: Padding(
+                                            child: const Padding(
                                               padding: EdgeInsets.symmetric(
                                                   vertical: 2, horizontal: 6),
                                               child: Text.rich(
@@ -332,7 +332,7 @@ class _EventScreenState extends State<EventScreen> {
                                       )),
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
                             ],
@@ -340,10 +340,10 @@ class _EventScreenState extends State<EventScreen> {
                         if (activeStep == 1)
                           Column(
                             children: [
-                              SelectEvent(
+                              const SelectEvent(
                                 hintText: 'จำกัดเพศ',
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
                               Row(
@@ -351,9 +351,9 @@ class _EventScreenState extends State<EventScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Container(
-                                      margin: EdgeInsets.only(right: 8),
-                                      child: Text('ตั้งแต่')),
-                                  Expanded(
+                                      margin: const EdgeInsets.only(right: 8),
+                                      child: const Text('ตั้งแต่')),
+                                  const Expanded(
                                     flex: 2,
                                     child: SelectEvent(
                                       hintText: 'อายุ',
@@ -361,9 +361,9 @@ class _EventScreenState extends State<EventScreen> {
                                   ),
                                   Container(
                                       margin:
-                                          EdgeInsets.only(right: 8, left: 8),
-                                      child: Text('ถึง')),
-                                  Expanded(
+                                          const EdgeInsets.only(right: 8, left: 8),
+                                      child: const Text('ถึง')),
+                                  const Expanded(
                                     flex: 2,
                                     child: SelectEvent(
                                       hintText: 'อายุ',
@@ -371,10 +371,10 @@ class _EventScreenState extends State<EventScreen> {
                                   ),
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
-                              SelectEvent(
+                              const SelectEvent(
                                 hintText: 'ประเภทของอีเว้นท์',
                               ),
                             ],
@@ -385,7 +385,7 @@ class _EventScreenState extends State<EventScreen> {
                           child: Column(
                             children: [
                               if (activeStep >= 1) ...[
-                                Row(
+                                const Row(
                                   children: [
                                     Expanded(
                                       child: Text(
@@ -393,14 +393,14 @@ class _EventScreenState extends State<EventScreen> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                               ],
                               ButtonEvent(
                                 borderRadius: 8,
-                                bg: Color(0xff27AE4D),
-                                shadow: Color.fromARGB(255, 28, 126, 56),
+                                bg: const Color(0xff27AE4D),
+                                shadow: const Color.fromARGB(255, 28, 126, 56),
                                 text: activeStep == 0 ? 'ต่อไป' : 'เสร็จสิ้น',
                                 onTap: () {
                                   setState(() {
@@ -409,13 +409,13 @@ class _EventScreenState extends State<EventScreen> {
                                 },
                               ),
                               if (activeStep >= 1) ...[
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 ButtonEvent(
                                   borderRadius: 8,
-                                  bg: Color(0xff274DAE),
-                                  shadow: Color.fromARGB(255, 28, 55, 123),
+                                  bg: const Color(0xff274DAE),
+                                  shadow: const Color.fromARGB(255, 28, 55, 123),
                                   text: 'ย้อนกลับ',
                                   onTap: () {
                                     setState(() {

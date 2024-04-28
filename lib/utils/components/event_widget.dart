@@ -1,13 +1,34 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:my_event_flutter/utils/state/location_state.dart';
 
 import '../models/model_event.dart';
 
 class EventWidget extends StatelessWidget {
-  const EventWidget({super.key, required this.event, this.color});
+  const EventWidget({super.key, required this.event, this.color, required this.locationController});
 
   final EventModel event;
   final Color? color;
+  final LocationState locationController;
+
+  double getDistance(LatLng location){
+    var loc2 = locationController.currentLocation.value;
+    var p = 0.017453292519943295;
+    var c = cos;
+    var lat2 = location.latitude;
+    var lon2 = location.longitude;
+    var lat1 = loc2.latitude;
+    var lon1 = loc2.longitude;
+    var a = 0.5 - c((lat2 - lat1) * p)/2 + 
+          c(lat1 * p) * c(lat2 * p) * 
+          (1 - c((lon2 - lon1) * p))/2;
+    return 12742 * asin(sqrt(a));
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -21,12 +42,12 @@ class EventWidget extends StatelessWidget {
             Container(
                 width: 100,
                 height: 100,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Color(0xffF0F0F0),
-                  borderRadius: const BorderRadius.all(Radius.circular(15)),
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
                 ),
-                margin: EdgeInsets.only(right: 10),
-                child: Center(child: Text(''))),
+                margin: const EdgeInsets.only(right: 10),
+                child: const Center(child: Text(''))),
             Flexible(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -45,19 +66,19 @@ class EventWidget extends StatelessWidget {
                         ),
                       ),
                       if (event.verify)
-                        Icon(
+                        const Icon(
                           Icons.check_circle,
                           color: Color(0xff27AE4D),
                         ),
                       if (event.booking)
                         Container(
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Color(0xff27AE4D),
                             borderRadius:
-                                const BorderRadius.all(Radius.circular(15)),
+                                BorderRadius.all(Radius.circular(15)),
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 5),
                             child: Text(
                               'จองแล้ว',
                               style: TextStyle(
@@ -76,7 +97,7 @@ class EventWidget extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        '10.2km',
+                        '${getDistance(event.location ?? const LatLng(0, 0)).toPrecision(2)}km',
                         style: TextStyle(color: color),
                       ),
                       Icon(

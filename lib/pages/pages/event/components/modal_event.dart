@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'button_event.dart';
 
 class ModalEvent extends StatefulWidget {
-  const ModalEvent({super.key});
+  double lat = 13.736717;
+  double lng = 100.523186;
+  
+  ModalEvent({
+    super.key,
+    required this.lat,
+    required this.lng,
+  });
 
   @override
   State<ModalEvent> createState() => _ModalEventState();
 }
 
 class _ModalEventState extends State<ModalEvent> {
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -20,10 +29,10 @@ class _ModalEventState extends State<ModalEvent> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
@@ -32,9 +41,7 @@ class _ModalEventState extends State<ModalEvent> {
                 ),
               ],
             ),
-
-
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
@@ -44,7 +51,7 @@ class _ModalEventState extends State<ModalEvent> {
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Column(
@@ -58,13 +65,13 @@ class _ModalEventState extends State<ModalEvent> {
                         icon: Icons.message,
                         borderRadius: 15,
                         color: Colors.white,
-                        bg: Color(0xff274DAE),
-                        shadow: Color.fromARGB(255, 29, 58, 130),
+                        bg: const Color(0xff274DAE),
+                        shadow: const Color.fromARGB(255, 29, 58, 130),
                         text: '',
                         onTap: () {},
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     Expanded(
@@ -73,33 +80,27 @@ class _ModalEventState extends State<ModalEvent> {
                         vertical: 15,
                         borderRadius: 15,
                         color: Colors.black,
-                        bg: Color(0xffF0F0F0),
-                        shadow: Color.fromARGB(255, 171, 171, 171),
+                        bg: const Color(0xffF0F0F0),
+                        shadow: const Color.fromARGB(255, 171, 171, 171),
                         text: 'เปิดแผนที่',
-                        onTap: () {},
+                        onTap: () {
+                          launchUrl(Uri(
+                            scheme: 'https',
+                            host: 'www.google.com',
+                            path: 'maps/search/',
+                            queryParameters: {
+                              'api': '1',
+                              'query': [widget.lat, widget.lng].join(','),
+                            },
+                          ));
+                        },
                       ),
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 5,
-                      child: ButtonEvent(
-                        vertical: 8,
-                        borderRadius: 15,
-                        color: Colors.white,
-                        bg: Color(0xffC02E2E),
-                        shadow: Color.fromARGB(255, 141, 34, 34),
-                        text: 'ยกเลิกการเข้าร่วม',
-                        onTap: () {},
-                      ),
-                    ),
-                  ],
-                ),
+                )
               ],
             ),
             Padding(
@@ -112,7 +113,7 @@ class _ModalEventState extends State<ModalEvent> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
           ],
         ),
       ),

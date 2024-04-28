@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_event_flutter/utils/mock/event.dart';
 import '../../../utils/models/model_event.dart';
 import '../../../utils/state/location_state.dart';
 import '../../../utils/state/theme_state.dart';
@@ -18,58 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isLocationLoading = false;
   final ThemeState themeController = Get.put(ThemeState());
   final LocationState locationController = Get.put(LocationState());
-  List<EventModel> events = [
-    EventModel(
-        id: "1",
-        name: 'งานมหกรรมหนังสือ',
-        detail:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
-        verify: true,
-        booking: true),
-    EventModel(
-        id: "2",
-        name: 'งานดนตรี ครั้งที่ 999',
-        detail:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
-        verify: false,
-        booking: false),
-    EventModel(
-        id: "3",
-        name: 'Motor Show',
-        detail:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
-        verify: false,
-        booking: false),
-    EventModel(
-        id: "4",
-        name: 'Thailand Game Show',
-        detail:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
-        verify: false,
-        booking: false),
-    EventModel(
-        id: "5",
-        name: 'Apple WWDC24',
-        detail:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
-        verify: false,
-        booking: false),
-    EventModel(
-        id: "6",
-        name: 'FinTech X 88Sandbox',
-        detail:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
-        verify: false,
-        booking: false),
-    EventModel(
-        id: "7",
-        name: 'Food Festival',
-        detail:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
-        verify: false,
-        booking: false),
-  ];
-
+  
   @override
   void initState() {
     _isLocationLoading = false;
@@ -239,6 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         for (int index = 0; index < events.length; index++)
                           EventWidget(
                             event: events[index],
+                            locationController: locationController,
                           ),
                       ],
                     ),

@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 
 class EventModel {
@@ -11,6 +12,8 @@ class EventModel {
   final int? gender;
   final List? age;
   final int? type;
+  final String? startedAt;
+  final String? locationName;
 
   EventModel({
     this.id,
@@ -23,6 +26,8 @@ class EventModel {
     this.gender,
     this.age,
     this.type,
+    this.startedAt,
+    this.locationName,
   });
 
   factory EventModel.fromJson(Map json) {
@@ -30,7 +35,7 @@ class EventModel {
     List age = [];
     bool verify = false;
     bool booking = false;
-    LatLng location = LatLng(0, 0);
+    LatLng location = const LatLng(0, 0);
     return EventModel(
       id: item['id'],
       name: item['name'],
@@ -41,7 +46,13 @@ class EventModel {
       gender: item['gender'],
       age: age,
       type: item['type'],
+      startedAt: item['started_at'],
     );
+  }
+
+  String getStartedAt() {
+    DateFormat format = DateFormat("yyyy-MM-dd hh:mm:ss");
+    return format.format(DateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(startedAt ?? DateTime.now().toUtc().toIso8601String()));
   }
 
   Map<String, dynamic> toJson() => {
@@ -52,5 +63,7 @@ class EventModel {
         "gender": gender,
         "age": age,
         "type": type,
+        "started_at": startedAt,
+        "location_name": locationName,
       };
 }

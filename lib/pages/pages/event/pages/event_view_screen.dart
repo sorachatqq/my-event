@@ -1,11 +1,19 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:my_event_flutter/utils/mock/event.dart';
+import 'package:my_event_flutter/utils/models/model_event.dart';
+import 'package:my_event_flutter/utils/state/location_state.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../utils/state/auth_state.dart';
 import '../../../../utils/state/theme_state.dart';
 import '../components/button_event.dart';
 import '../components/modal_event.dart';
 
+Type nonNullableTypeOf<T>(T? object) => T;
 class EventViewScreen extends StatefulWidget {
   const EventViewScreen({super.key, required this.id});
   final String id;
@@ -17,27 +25,52 @@ class EventViewScreen extends StatefulWidget {
 class _EventViewScreenState extends State<EventViewScreen> {
   final ThemeState themeController = Get.put(ThemeState());
   final AuthState authController = Get.put(AuthState());
+  final LocationState locationController = Get.put(LocationState());
   bool _isPageLoading = true;
+  double lat = 13.9166;
+  double lng = 100.5215;
 
   @override
   void initState() {
     _isPageLoading = true;
+    _event = EventModel();
+    _isEventFound = false;
     super.initState();
     print('EventViewScreen: ${widget.id}');
     getEventInfo();
   }
 
+  bool _isEventFound = false;
+  EventModel _event = EventModel();
   Future<void> getEventInfo() async {
     // Get event info from API
     setState(() {
       _isPageLoading = true;
     });
 
-    await Future.delayed(const Duration(seconds: 5));
+    await locationController.load();
+    setState(() {
+      _isEventFound = true;
+      _event = events.where((element) => (element.id ?? "1") == (widget.id)).first;
+    });
 
     setState(() {
       _isPageLoading = false;
     });
+  }
+
+  double getDistance(LatLng location){
+    var loc2 = locationController.currentLocation.value;
+    var p = 0.017453292519943295;
+    var c = cos;
+    var lat2 = location.latitude;
+    var lon2 = location.longitude;
+    var lat1 = loc2.latitude;
+    var lon1 = loc2.longitude;
+    var a = 0.5 - c((lat2 - lat1) * p)/2 + 
+          c(lat1 * p) * c(lat2 * p) * 
+          (1 - c((lon2 - lon1) * p))/2;
+    return 12742 * asin(sqrt(a));
   }
 
   Future<void> joining() async {
@@ -47,12 +80,16 @@ class _EventViewScreenState extends State<EventViewScreen> {
         // backgroundColor: Colors.white,
         context: context,
         isScrollControlled: true,
-        builder: (context) => ModalEvent());
+        builder: (context) => ModalEvent(
+          lat: lat,
+          lng: lng,
+        ));
   }
 
   @override
   Widget build(BuildContext context) {
     if (_isPageLoading == true) return const Center(child: CircularProgressIndicator());
+    if (_isEventFound == false) return const Center(child: Text('Event not found'));
     return Scaffold(
       body: Container(
         width: MediaQuery.of(context).size.width,
@@ -65,8 +102,8 @@ class _EventViewScreenState extends State<EventViewScreen> {
                   BlendMode.darken, // ใช้ BlendMode เพื่อให้รูปภาพมืดลง
                 ),
                 image: themeController.isDarkMode.value == true
-                    ? ExactAssetImage('assets/images/bg/login_dark.png')
-                    : ExactAssetImage('assets/images/bg/login_light.png'))),
+                    ? const ExactAssetImage('assets/images/bg/login_dark.png')
+                    : const ExactAssetImage('assets/images/bg/login_light.png'))),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -79,13 +116,14 @@ class _EventViewScreenState extends State<EventViewScreen> {
                 child: Container(
                   height: 150,
                   child: Center(
-                      child: Text(
-                    'มหกรรมหนังสือ',
-                    style: TextStyle(
+                    child: Text(
+                      _event.name ?? '',
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.white),
-                  )),
+                    )
+                  ),
                 ),
               ),
             ),
@@ -101,7 +139,7 @@ class _EventViewScreenState extends State<EventViewScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: Column(
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       Row(
@@ -112,8 +150,8 @@ class _EventViewScreenState extends State<EventViewScreen> {
                             child: ButtonEvent(
                               vertical: 10,
                               borderRadius: 8,
-                              bg: Color(0xff797979),
-                              shadow: Color.fromARGB(255, 82, 82, 82),
+                              bg: const Color(0xff797979),
+                              shadow: const Color.fromARGB(255, 82, 82, 82),
                               text: 'กลับหน้าหลัก',
                               onTap: () {
                                 context.pop();
@@ -122,7 +160,7 @@ class _EventViewScreenState extends State<EventViewScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       Expanded(
@@ -138,18 +176,19 @@ class _EventViewScreenState extends State<EventViewScreen> {
                                 children: [
                                   Column(
                                     children: [
-                                      Row(
+                                      if (_event.verify) Row(
                                         children: [
                                           Container(
-                                              width: 20,
-                                              height: 20,
-                                              margin:
-                                                  EdgeInsets.only(right: 10),
-                                              child: Icon(
-                                                Icons.check_circle,
-                                                color: Color(0xff27AE4D),
-                                              )),
-                                          Flexible(
+                                            width: 20,
+                                            height: 20,
+                                            margin:
+                                                const EdgeInsets.only(right: 10),
+                                            child: const Icon(
+                                              Icons.check_circle,
+                                              color: Color(0xff27AE4D),
+                                            )
+                                          ),
+                                          const Flexible(
                                             child: Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.start,
@@ -174,37 +213,39 @@ class _EventViewScreenState extends State<EventViewScreen> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 15,
                                       ),
                                       Text(
-                                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam vel purus quis enim venenatis iaculis. Pellentesque et sodales massa. Maecenas accumsan velit non lorem porta tristique. Vestibulum bibendum et magna quis eleifend. Vivamus arcu dui, sollicitudin non efficitur eget, porttitor eu dolor. Proin vel euismod ipsum. Morbi vel semper sem. Morbi fermentum at velit eget volutpat Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam vel purus quis enim venenatis iaculis. Pellentesque et sodales massa. Maecenas accumsan velit non lorem porta tristique. Vestibulum bibendum et magna quis eleifend. Vivamus arcu dui, sollicitudin non efficitur eget, porttitor eu dolor. Proin vel euismod ipsum. Morbi vel semper sem. Morbi fermentum at velit eget volutpat Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam vel purus quis enim venenatis iaculis. Pellentesque et sodales massa. Maecenas accumsan velit non lorem porta tristique. Vestibulum bibendum et magna quis eleifend. Vivamus arcu dui, sollicitudin non efficitur eget, porttitor eu dolor. Proin vel euismod ipsum. Morbi vel semper sem. Morbi fermentum at velit eget volutpat'),
-                                      SizedBox(
+                                        _event.detail ?? ''
+                                      ),
+                                      const SizedBox(
                                         height: 15,
                                       ),
                                       Row(
                                         children: [
                                           Text(
-                                            '10.2km',
-                                            style: TextStyle(),
+                                            '${getDistance(_event.location ?? const LatLng(0, 0)).toPrecision(2)}km',
+                                            style: const TextStyle(),
                                           ),
-                                          Icon(
+                                          const Icon(
                                             Icons.pin_drop,
                                             size: 15,
                                           ),
                                           Expanded(
-                                              child: Text(
-                                            'อิมแพคอารีนา เมืองทองธานี',
-                                            style: TextStyle(),
-                                          )),
+                                            child: Text(
+                                              _event.locationName ?? 'Unknown',
+                                              style: const TextStyle(),
+                                            )
+                                          ),
                                         ],
                                       ),
                                       Row(
                                         children: [
                                           Text(
-                                            '17 มกราคม 2567 12:00น.',
+                                            _event.getStartedAt(),
                                             textAlign: TextAlign.start,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold),
                                           ),
@@ -218,7 +259,7 @@ class _EventViewScreenState extends State<EventViewScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       SafeArea(
@@ -233,15 +274,27 @@ class _EventViewScreenState extends State<EventViewScreen> {
                                     vertical: 15,
                                     borderRadius: 15,
                                     color: Colors.black,
-                                    bg: Color(0xffF0F0F0),
-                                    shadow: Color.fromARGB(255, 171, 171, 171),
+                                    bg: const Color(0xffF0F0F0),
+                                    shadow: const Color.fromARGB(255, 171, 171, 171),
                                     text: 'เปิดแผนที่',
-                                    onTap: () {},
+                                    onTap: () {
+                                      launchUrl(
+                                          Uri(
+                                            scheme: 'https',
+                                            host: 'www.google.com',
+                                            path: 'maps/search/',
+                                            queryParameters: {
+                                              'api': '1',
+                                              'query': [lat, lng].join(','),
+                                            },
+                                          )
+                                      );
+                                    },
                                   ),
                                 ),
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             Row(
@@ -253,13 +306,13 @@ class _EventViewScreenState extends State<EventViewScreen> {
                                     icon: Icons.message,
                                     borderRadius: 15,
                                     color: Colors.white,
-                                    bg: Color(0xff274DAE),
-                                    shadow: Color.fromARGB(255, 29, 58, 130),
+                                    bg: const Color(0xff274DAE),
+                                    shadow: const Color.fromARGB(255, 29, 58, 130),
                                     text: '',
                                     onTap: () {},
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 10,
                                 ),
                                 Expanded(
@@ -268,8 +321,8 @@ class _EventViewScreenState extends State<EventViewScreen> {
                                     vertical: 15,
                                     borderRadius: 15,
                                     color: Colors.white,
-                                    bg: Color(0xff27AE4D),
-                                    shadow: Color.fromARGB(255, 28, 126, 56),
+                                    bg: const Color(0xff27AE4D),
+                                    shadow: const Color.fromARGB(255, 28, 126, 56),
                                     text: 'ฉันสนใจจะเข้าร่วม',
                                     onTap: () {
                                       joining();

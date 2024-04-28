@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_event_flutter/utils/state/location_state.dart';
 
 import '../../../../utils/components/event_widget.dart';
 import '../../../../utils/models/model_event.dart';
@@ -15,7 +16,9 @@ class EventCreatedScreen extends StatefulWidget {
 }
 
 class _EventCreatedScreenState extends State<EventCreatedScreen> {
+  bool _isLocationLoading = false;
   final ThemeState themeController = Get.put(ThemeState());
+  final LocationState locationController = Get.put(LocationState());
   List<EventModel> waitingEvents = [
     EventModel(
         id: "1",
@@ -73,7 +76,35 @@ class _EventCreatedScreenState extends State<EventCreatedScreen> {
   ];
 
   @override
+  void initState() {
+    _isLocationLoading = false;
+    super.initState();
+    init();
+  }
+
+  @override
+  void dispose() {
+    locationController.dispose();
+    super.dispose();
+  }
+
+  init() async {
+    getLocation();
+  }
+
+  Future<void> getLocation() async {
+    setState(() {
+      _isLocationLoading = true;
+    });
+    await locationController.load();
+    setState(() {
+      _isLocationLoading = false;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_isLocationLoading == true) return const Center(child: CircularProgressIndicator());
     return Scaffold(
       body: Column(
         children: [
@@ -167,6 +198,7 @@ class _EventCreatedScreenState extends State<EventCreatedScreen> {
                             index++)
                           EventWidget(
                             event: waitingEvents[index],
+                            locationController: locationController,
                           ),
                         Row(
                           children: [
@@ -185,6 +217,7 @@ class _EventCreatedScreenState extends State<EventCreatedScreen> {
                             index++)
                           EventWidget(
                             event: pendingEvents[index],
+                            locationController: locationController,
                           ),
                         Row(
                           children: [
@@ -203,6 +236,7 @@ class _EventCreatedScreenState extends State<EventCreatedScreen> {
                             index++)
                           EventWidget(
                             event: successEvents[index],
+                            locationController: locationController,
                           ),
                       ],
                     ),

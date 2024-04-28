@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_event_flutter/utils/mock/event.dart';
+import 'package:my_event_flutter/utils/state/location_state.dart';
 
 import '../../../utils/components/event_widget.dart';
 import '../../../utils/models/model_event.dart';
@@ -18,61 +20,41 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  bool _isLocationLoading = false;
   final ThemeState themeController = Get.put(ThemeState());
   final AuthState authController = Get.put(AuthState());
-  List<EventModel> events = [
-    EventModel(
-        id: "1",
-        name: 'งานมหกรรมหนังสือ',
-        detail:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
-        verify: true,
-        booking: true),
-    EventModel(
-        id: "2",
-        name: 'งานดนตรี ครั้งที่ 999',
-        detail:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
-        verify: false,
-        booking: false),
-    EventModel(
-        id: "3",
-        name: 'Motor Show',
-        detail:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
-        verify: false,
-        booking: false),
-    EventModel(
-        id: "4",
-        name: 'Thailand Game Show',
-        detail:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
-        verify: false,
-        booking: false),
-    EventModel(
-        id: "5",
-        name: 'Apple WWDC24',
-        detail:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
-        verify: false,
-        booking: false),
-    EventModel(
-        id: "6",
-        name: 'FinTech X 88Sandbox',
-        detail:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
-        verify: false,
-        booking: false),
-    EventModel(
-        id: "7",
-        name: 'Food Festival',
-        detail:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
-        verify: false,
-        booking: false),
-  ];
+  final LocationState locationController = Get.put(LocationState());
+  
+  @override
+  void initState() {
+    _isLocationLoading = false;
+    super.initState();
+    init();
+  }
+
+  @override
+  void dispose() {
+    locationController.dispose();
+    super.dispose();
+  }
+
+  init() async {
+    getLocation();
+  }
+
+  Future<void> getLocation() async {
+    setState(() {
+      _isLocationLoading = true;
+    });
+    await locationController.load();
+    setState(() {
+      _isLocationLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_isLocationLoading == true) return const Center(child: CircularProgressIndicator());
     return Scaffold(
       body: Column(
         children: [
@@ -94,7 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               themeController.switchTheme(
                                   !themeController.isDarkMode.value);
                             },
-                            child: Text(
+                            child: const Text(
                               'โปรไฟล์',
                               style: TextStyle(
                                   fontSize: 30, fontWeight: FontWeight.bold),
@@ -105,8 +87,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           flex: 2,
                           child: ButtonProfile(
                             borderRadius: 8,
-                            bg: Color(0xff797979),
-                            shadow: Color.fromARGB(255, 82, 82, 82),
+                            bg: const Color(0xff797979),
+                            shadow: const Color.fromARGB(255, 82, 82, 82),
                             text: 'กลับหน้าหลัก',
                             onTap: () {
                               context.pop();
@@ -117,7 +99,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                 ),
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     CircleAvatar(
@@ -139,7 +121,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Text(
                       '${authController.user.value.firstname} ${authController.user.value.lastname}',
                       style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -148,23 +130,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Text(
                       '@${authController.user.value.username}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 14,
                       ),
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 ButtonProfile(
                   borderRadius: 15,
-                  bg: Color(0xff27AE4D),
-                  shadow: Color.fromARGB(255, 28, 126, 56),
+                  bg: const Color(0xff27AE4D),
+                  shadow: const Color.fromARGB(255, 28, 126, 56),
                   text: 'แก้ไขโปรไฟล์',
                   onTap: () {},
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Row(
@@ -173,8 +155,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       flex: 3,
                       child: ButtonProfile(
                         borderRadius: 15,
-                        bg: Color(0xff274DAE),
-                        shadow: Color.fromARGB(255, 29, 58, 130),
+                        bg: const Color(0xff274DAE),
+                        shadow: const Color.fromARGB(255, 29, 58, 130),
                         text: 'อีเว้นท์ที่ฉันสร้าง',
                         onTap: () {
 
@@ -183,15 +165,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         },
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     Expanded(
                       flex: 2,
                       child: ButtonProfile(
                         borderRadius: 15,
-                        bg: Color(0xffEE675C),
-                        shadow: Color.fromARGB(255, 180, 79, 70),
+                        bg: const Color(0xffEE675C),
+                        shadow: const Color.fromARGB(255, 180, 79, 70),
                         text: 'ออกจากระบบ',
                         onTap: () {
                           authController.remove();
@@ -201,7 +183,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
               ],
@@ -209,9 +191,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           Expanded(
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Color(0xffEDEDED),
-                borderRadius: const BorderRadius.only(
+                borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20)),
               ),
@@ -224,7 +206,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         horizontal: 20, vertical: 20),
                     child: Column(
                       children: [
-                        Row(
+                        const Row(
                           children: [
                             Text(
                               'อีเว้นท์ที่เข้าร่วม',
@@ -235,10 +217,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ],
                         ),
-                        for (int index = 0; index < events.length; index++)
+                        for (int index = 0; index < events.where((element) => element.booking).length; index++)
                           EventWidget(
                             event: events[index],
                             color: Colors.black,
+                            locationController: locationController,
                           ),
                       ],
                     ),

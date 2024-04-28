@@ -1,11 +1,14 @@
+import 'dart:io';
+
 import 'package:easy_stepper/easy_stepper.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:my_event_flutter/utils/state/location_state.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../utils/state/theme_state.dart';
@@ -23,24 +26,49 @@ class EventScreen extends StatefulWidget {
 }
 
 class _EventScreenState extends State<EventScreen> {
+  final ImagePicker picker = ImagePicker();
   final ThemeState themeController = Get.put(ThemeState());
   TextEditingController nameController = TextEditingController();
   TextEditingController detailController = TextEditingController();
+  final LocationState locationController = Get.put(LocationState());
   late final MapController _mapController;
+  File? _selectedImage;
+  bool _isPageLoading = false;
 
   int activeStep = 0;
 
   @override
   void initState() {
+    _selectedImage = null;
+    _isPageLoading = true;
     super.initState();
     init();
   }
 
+  @override
+  void dispose() {
+    _mapController.dispose();
+    locationController.dispose();
+    super.dispose();
+  }
+
   init() async {
+    getLocation();
     _mapController = MapController();
   }
 
+  Future<void> getLocation() async {
+    setState(() {
+      _isPageLoading = true;
+    });
+    await locationController.load();
+    setState(() {
+      _isPageLoading = false;
+    });
+  }
+
   void onMapEvent(MapEvent mapEvent) {
+    if (_isPageLoading == false) return;
     debugPrint(mapEvent.source.toString());
     // debugPrint(mapEvent.zoom.toString());
 
@@ -49,10 +77,27 @@ class _EventScreenState extends State<EventScreen> {
       // debugPrint(mapEvent.center.latitude.toString());
       // debugPrint(mapEvent.center.longitude.toString());
     }
+    if (mapEvent is MapEventMove) {
+      print(mapEvent.camera.center.latitude.toString());
+      print(mapEvent.camera.center.longitude.toString());
+    }
   }
+
+  void pickAnImage() async {
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image == null) return;
+    setState(() {
+      _selectedImage = File(image.path);
+    });
+  }
+
+  void createEvent() async {}
 
   @override
   Widget build(BuildContext context) {
+    if (_isPageLoading == true) {
+      return const Center(child: CircularProgressIndicator());
+    }
     return Scaffold(
       body: Column(
         children: [
@@ -66,7 +111,6 @@ class _EventScreenState extends State<EventScreen> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Row(
-                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
@@ -188,34 +232,39 @@ class _EventScreenState extends State<EventScreen> {
                         if (activeStep == 0)
                           Column(
                             children: [
-                              InkWell(child: Container(
-                                height: 200,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xffEDEDED),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(15)),
-                                ),
-                                child: const Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.cloud_upload_outlined,
-                                        size: 60,
-                                        color: Colors.black,
-                                      ),
-                                      Text(
-                                        'Choose a file or drag it here',
-                                        style: TextStyle(
-                                          color: Colors.black,
+                              _selectedImage == null
+                                  ? InkWell(
+                                      onTap: pickAnImage,
+                                      child: Container(
+                                        height: 200,
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xffEDEDED),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(15)),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )),
+                                        child: const Center(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Icons.cloud_upload_outlined,
+                                                size: 60,
+                                                color: Colors.black,
+                                              ),
+                                              Text(
+                                                'Choose a file or drag it here',
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ))
+                                  : Image.file(_selectedImage ?? File('')),
                               const SizedBox(
                                 height: 10,
                               ),
@@ -262,15 +311,21 @@ class _EventScreenState extends State<EventScreen> {
                                           BorderRadius.all(Radius.circular(15)),
                                     ),
                                     child: ClipRRect(
-                                      borderRadius:
-                                          const BorderRadius.all(Radius.circular(15)),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(15)),
                                       child: FlutterMap(
                                         mapController: _mapController,
                                         options: MapOptions(
+                                          onMapReady: () {
+                                            _mapController.move(
+                                                LatLng(
+                                                  locationController.currentLocation.value.latitude,
+                                                  locationController.currentLocation.value.longitude
+                                                ),
+                                                14);
+                                          },
                                           onMapEvent: onMapEvent,
-                                          initialCenter: const LatLng(
-                                              16.184007780288713,
-                                              103.30415368080139),
+                                          initialCenter: const LatLng(0, 0),
                                           initialZoom: 14,
                                           maxZoom: 18,
                                           minZoom: 2,
@@ -302,7 +357,8 @@ class _EventScreenState extends State<EventScreen> {
                                             decoration: BoxDecoration(
                                               color:
                                                   Colors.white.withOpacity(0.5),
-                                              borderRadius: const BorderRadius.only(
+                                              borderRadius:
+                                                  const BorderRadius.only(
                                                 bottomRight:
                                                     Radius.circular(15),
                                                 bottomLeft: Radius.circular(15),
@@ -360,8 +416,8 @@ class _EventScreenState extends State<EventScreen> {
                                     ),
                                   ),
                                   Container(
-                                      margin:
-                                          const EdgeInsets.only(right: 8, left: 8),
+                                      margin: const EdgeInsets.only(
+                                          right: 8, left: 8),
                                       child: const Text('ถึง')),
                                   const Expanded(
                                     flex: 2,
@@ -415,7 +471,8 @@ class _EventScreenState extends State<EventScreen> {
                                 ButtonEvent(
                                   borderRadius: 8,
                                   bg: const Color(0xff274DAE),
-                                  shadow: const Color.fromARGB(255, 28, 55, 123),
+                                  shadow:
+                                      const Color.fromARGB(255, 28, 55, 123),
                                   text: 'ย้อนกลับ',
                                   onTap: () {
                                     setState(() {

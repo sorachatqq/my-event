@@ -11,6 +11,7 @@ class ButtonHome extends StatelessWidget {
     required this.borderRadius,
     required this.icons,
     this.fontSize,
+    this.isLoading,
   });
   final String text;
   final void Function() onTap;
@@ -19,10 +20,12 @@ class ButtonHome extends StatelessWidget {
   final double borderRadius;
   final IconData icons;
   final double? fontSize;
+  final bool? isLoading;
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      
+      onTap: isLoading == false ? onTap : () {},
       child: Container(
         decoration: BoxDecoration(
           color: bg,
@@ -38,7 +41,11 @@ class ButtonHome extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-          child: Row(
+          child: isLoading == true ? const Text("Loading", 
+            style: TextStyle(
+              color: Colors.white,
+            )
+          ) : Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(

@@ -18,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool _isLocationLoading = false;
   final ThemeState themeController = Get.put(ThemeState());
   final LocationState locationController = Get.put(LocationState());
   List<EventModel> events = [
@@ -74,6 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    _isLocationLoading = false;
     super.initState();
     init();
   }
@@ -83,7 +85,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> getLocation() async {
+    setState(() {
+      _isLocationLoading = true;
+    });
     Position lastPosition = await locationController.load();
+    setState(() {
+      _isLocationLoading = false;
+    });
     print('getLocation');
     print(lastPosition.latitude);
     print(lastPosition.longitude);
@@ -199,7 +207,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 bg: Color(0xff274DAE),
                                 shadow: Color.fromARGB(255, 29, 58, 130),
                                 text: 'ค้นหาใหม่',
-                                onTap: () {},
+                                isLoading: _isLocationLoading,
+                                onTap: () {
+                                  getLocation();
+                                },
                               ),
                             ),
                           ],

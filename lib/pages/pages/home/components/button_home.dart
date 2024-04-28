@@ -24,8 +24,7 @@ class ButtonHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      
-      onTap: isLoading == false ? onTap : () {},
+      onTap: isLoading == true ? () {} : onTap,
       child: Container(
         decoration: BoxDecoration(
           color: bg,

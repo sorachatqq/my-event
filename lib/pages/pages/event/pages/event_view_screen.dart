@@ -154,7 +154,7 @@ class _EventViewScreenState extends State<EventViewScreen> {
                               shadow: const Color.fromARGB(255, 82, 82, 82),
                               text: 'กลับหน้าหลัก',
                               onTap: () {
-                                context.pop();
+                                context.push(context.namedLocation('profile'));
                               },
                             ),
                           ),

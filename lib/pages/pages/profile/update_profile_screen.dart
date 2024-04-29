@@ -64,7 +64,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                     children: [
                       IconButton(
                         onPressed: () {
-                          Get.back();
+                          context.push(context.namedLocation('profile'));
                         },
                         icon: const Icon(Icons.arrow_back),
                       ),

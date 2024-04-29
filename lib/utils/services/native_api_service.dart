@@ -11,7 +11,7 @@ final dio = Dio();
 class NativeApiService {
   static bool appDev = kDebugMode;
 
-  static String serverDev = "localhost";
+  static String serverDev = "10.0.2.2";
 
   static String getHost() {
     if (appDev) {
@@ -43,11 +43,9 @@ class NativeApiService {
     }
 
     try {
-      final response =
-          await dio.get(getApi() + url, options: Options(
-            contentType: Headers.jsonContentType,
-            headers: headers
-          ));
+      final response = await dio.get(getApi() + url,
+          options:
+              Options(contentType: Headers.jsonContentType, headers: headers));
       print(response.data);
       if (response.statusCode == 401) {
         await authController.remove();
@@ -68,7 +66,8 @@ class NativeApiService {
     }
   }
 
-  static post(String url, Object data, {bool formEncoded = false, bool multipart = false}) async {
+  static post(String url, Object data,
+      {bool formEncoded = false, bool multipart = false}) async {
     final AuthState authController = Get.put(AuthState());
     Map<String, String> headers = getHeaders();
 
@@ -77,13 +76,18 @@ class NativeApiService {
     }
 
     try {
-      final response = await dio.post(getApi() + url,
-          data: data,
-          options: Options(
-            contentType: formEncoded ? Headers.formUrlEncodedContentType : (multipart ? Headers.multipartFormDataContentType : Headers.jsonContentType),
-            headers: headers,
-          ),
-        );
+      final response = await dio.post(
+        getApi() + url,
+        data: data,
+        options: Options(
+          contentType: formEncoded
+              ? Headers.formUrlEncodedContentType
+              : (multipart
+                  ? Headers.multipartFormDataContentType
+                  : Headers.jsonContentType),
+          headers: headers,
+        ),
+      );
       print('Payload: ${response.data}');
       if (response.statusCode == 401) {
         await authController.remove();

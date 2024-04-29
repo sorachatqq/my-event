@@ -59,7 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
       authController.save(newUser);
       context.go(context.namedLocation('login'));
-    } catch (err) {
+    } on DioException catch (err) {
       print(err);
       NativeApiService.alert(context,
         content: (err as DioException).response!.data['detail'] ?? 'Something went wrong',

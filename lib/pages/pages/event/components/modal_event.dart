@@ -1,4 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:my_event_flutter/utils/services/native_api_service.dart';
+import 'package:my_event_flutter/utils/state/auth_state.dart';
+import 'package:my_event_flutter/utils/state/event_state.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'button_event.dart';
@@ -6,11 +11,13 @@ import 'button_event.dart';
 class ModalEvent extends StatefulWidget {
   double lat = 13.736717;
   double lng = 100.523186;
-  
+  String eventId;
+
   ModalEvent({
     super.key,
     required this.lat,
     required this.lng,
+    required this.eventId,
   });
 
   @override
@@ -18,9 +25,56 @@ class ModalEvent extends StatefulWidget {
 }
 
 class _ModalEventState extends State<ModalEvent> {
+  final EventState eventController = Get.put(EventState());
+  final AuthState authController = Get.find<AuthState>();
+  String registrationCode = "00000";
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    registrationCode = '00000';
+    _isLoading = false;
+    super.initState();
+    init();
+  }
+
+  @override
+  void dispose() {
+    eventController.dispose();
+    super.dispose();
+  }
+
+  void init() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      await authController.load();
+      final response =
+          await NativeApiService.post("events/register/${widget.eventId}", {});
+      Map<String, dynamic> data = response;
+      setState(() {
+        registrationCode = data['registration_code']!;
+      });
+    } on DioException catch (err) {
+      NativeApiService.alert(context,
+        content: (err).response!.data['detail'] ?? 'Something went wrong',
+        title: 'Error',
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18),
       child: Padding(
@@ -41,11 +95,11 @@ class _ModalEventState extends State<ModalEvent> {
                 ),
               ],
             ),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  '1D358J',
+                  (registrationCode).toUpperCase(),
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 80, fontWeight: FontWeight.bold),
                 ),

@@ -5,7 +5,7 @@ class EventModel {
   final String? id;
   final String? picture;
   final String? name;
-  final String? detail;
+  final String? description;
   final bool approved;
   final bool isRegistered;
   final LatLng? location;
@@ -20,7 +20,7 @@ class EventModel {
     this.id,
     this.picture = '',
     this.name,
-    this.detail,
+    this.description,
     this.approved = false,
     this.isRegistered = false,
     this.location,
@@ -35,12 +35,15 @@ class EventModel {
   factory EventModel.fromJson(Map json) {
     Map item = json;
     List age = [];
-    LatLng location = const LatLng(0, 0);
+    LatLng location = LatLng(
+      double.parse(json['latitude']),
+      double.parse(json['longitude'])
+    );
     return EventModel(
       id: item['id'],
       picture: item['picture'],
       name: item['name'],
-      detail: item['detail'],
+      description: item['description'],
       approved: item['approved'],
       isRegistered: item['is_registered'],
       location: location,
@@ -61,7 +64,7 @@ class EventModel {
         "id": id,
         "picture": picture,
         "name": name,
-        "detail": detail,
+        "description": description,
         "location": location,
         "gender": gender,
         "age": age,

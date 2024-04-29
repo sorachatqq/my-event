@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_event_flutter/pages/pages/home/components/select_event.dart';
+import 'package:my_event_flutter/utils/state/auth_state.dart';
 import 'package:my_event_flutter/utils/state/event_state.dart';
 import '../../../utils/models/model_event.dart';
 import '../../../utils/state/location_state.dart';
@@ -21,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isEventLoading = false;
   final ThemeState themeController = Get.put(ThemeState());
   final LocationState locationController = Get.put(LocationState());
+  final AuthState authController = Get.put(AuthState());
   final EventState eventController = Get.put(EventState());
   String selectedCategory = 'ทั้งหมด';
 
@@ -58,6 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _isEventLoading = true;
     });
+    await authController.load();
     await eventController.load();
     setState(() {
       _isEventLoading = false;

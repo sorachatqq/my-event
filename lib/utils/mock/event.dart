@@ -6,7 +6,7 @@ List<EventModel> events = [
     EventModel(
         id: "1",
         name: 'งานมหกรรมหนังสือ',
-        detail:
+        description:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
         approved: true,
         isRegistered: true,
@@ -16,7 +16,7 @@ List<EventModel> events = [
     EventModel(
         id: "2",
         name: 'งานดนตรี ครั้งที่ 999',
-        detail:
+        description:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
         approved: false,
         isRegistered: false,
@@ -26,7 +26,7 @@ List<EventModel> events = [
     EventModel(
         id: "3",
         name: 'Motor Show',
-        detail:
+        description:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
         approved: true,
         isRegistered: false,
@@ -36,7 +36,7 @@ List<EventModel> events = [
     EventModel(
         id: "4",
         name: 'Thailand Game Show',
-        detail:
+        description:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
         approved: true,
         isRegistered: false,
@@ -46,7 +46,7 @@ List<EventModel> events = [
     EventModel(
         id: "5",
         name: 'Apple WWDC24',
-        detail:
+        description:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
         approved: false,
         isRegistered: false,
@@ -56,7 +56,7 @@ List<EventModel> events = [
     EventModel(
         id: "6",
         name: 'FinTech X 88Sandbox',
-        detail:
+        description:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
         approved: true,
         isRegistered: false,
@@ -66,7 +66,7 @@ List<EventModel> events = [
     EventModel(
         id: "7",
         name: 'Food Festival',
-        detail:
+        description:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
         approved: false,
         isRegistered: false,

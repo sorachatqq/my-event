@@ -11,7 +11,7 @@ final dio = Dio();
 class NativeApiService {
   static bool appDev = kDebugMode;
 
-  static String serverDev = "10.0.2.2";
+  static String serverDev = "localhost";
 
   static String getHost() {
     if (appDev) {
@@ -38,6 +38,7 @@ class NativeApiService {
     final AuthState authController = Get.put(AuthState());
     Map<String, String> headers = getHeaders();
 
+    await authController.load();
     if (authController.isAuthenticated()) {
       headers['Authorization'] = 'Bearer ${authController.user.value.token}';
     }
@@ -71,6 +72,7 @@ class NativeApiService {
     final AuthState authController = Get.put(AuthState());
     Map<String, String> headers = getHeaders();
 
+    await authController.load();
     if (authController.isAuthenticated()) {
       headers['Authorization'] = 'Bearer ${authController.user.value.token}';
     }
@@ -115,6 +117,7 @@ class NativeApiService {
     final AuthState authController = Get.put(AuthState());
     Map<String, String> headers = getHeaders();
 
+    await authController.load();
     if (authController.isAuthenticated()) {
       headers['Authorization'] = 'Bearer ${authController.user.value.token}';
     }
@@ -146,6 +149,7 @@ class NativeApiService {
     final AuthState authController = Get.put(AuthState());
     Map<String, String> headers = getHeaders();
 
+    await authController.load();
     if (authController.isAuthenticated()) {
       headers['Authorization'] = 'Bearer ${authController.user.value.token}';
     }
@@ -177,6 +181,7 @@ class NativeApiService {
     final AuthState authController = Get.put(AuthState());
     Map<String, String> headers = getHeaders();
 
+    await authController.load();
     if (authController.isAuthenticated()) {
       headers['Authorization'] = 'Bearer ${authController.user.value.token}';
     }

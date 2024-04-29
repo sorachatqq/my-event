@@ -11,16 +11,29 @@ class EventState extends GetxController {
     super.onInit();
   }
 
+  @override
+  void dispose() {
+    events.clear();
+    super.dispose();
+  }
+
   void init() async {
+    events.clear();
     await load();
   }
 
   Future<void> load() async {
     events.clear();
     final response = await NativeApiService.get("events");
-    Map data = response;
-    print('data: $data');
-    List<EventModel> loadEvents = List<EventModel>.from(data['data'].map((x) => EventModel.fromJson(x)));
+    List<dynamic> data = response;
+    List<EventModel> loadEvents = List<EventModel>.from(data.map((x) => EventModel.fromJson({
+      ...x,
+      "id": x['_id'].toString(),
+      "latitude": x['location']['coordinates'][0].toString(),
+      "longitude": x['location']['coordinates'][1].toString(),
+      "locationName": x['location']['name'] ?? "Unknown",
+    })));
+    events.clear();
     events.addAll(loadEvents);
   }
 }

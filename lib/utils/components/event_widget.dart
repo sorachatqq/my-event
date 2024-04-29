@@ -9,13 +9,17 @@ import 'package:my_event_flutter/utils/state/location_state.dart';
 import '../models/model_event.dart';
 
 class EventWidget extends StatelessWidget {
-  const EventWidget({super.key, required this.event, this.color, required this.locationController});
+  const EventWidget(
+      {super.key,
+      required this.event,
+      this.color,
+      required this.locationController});
 
   final EventModel event;
   final Color? color;
   final LocationState locationController;
 
-  double getDistance(LatLng location){
+  double getDistance(LatLng location) {
     var loc2 = locationController.currentLocation.value;
     var p = 0.017453292519943295;
     var c = cos;
@@ -23,9 +27,9 @@ class EventWidget extends StatelessWidget {
     var lon2 = location.longitude;
     var lat1 = loc2.latitude;
     var lon1 = loc2.longitude;
-    var a = 0.5 - c((lat2 - lat1) * p)/2 + 
-          c(lat1 * p) * c(lat2 * p) * 
-          (1 - c((lon2 - lon1) * p))/2;
+    var a = 0.5 -
+        c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
     return 12742 * asin(sqrt(a));
   }
 
@@ -74,8 +78,7 @@ class EventWidget extends StatelessWidget {
                         Container(
                           decoration: const BoxDecoration(
                             color: Color(0xff27AE4D),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(15)),
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
                           ),
                           child: const Padding(
                             padding: EdgeInsets.symmetric(horizontal: 5),
@@ -90,7 +93,7 @@ class EventWidget extends StatelessWidget {
                     ],
                   ),
                   Text(
-                    '${event.detail}',
+                    '${event.description}',
                     maxLines: 3,
                     style: TextStyle(color: color),
                   ),
@@ -106,10 +109,11 @@ class EventWidget extends StatelessWidget {
                         size: 15,
                       ),
                       Expanded(
-                          child: Text(
-                        'อิมแพคอารีนา เมืองทองธานี',
-                        style: TextStyle(color: color),
-                      )),
+                        child: Text(
+                          event.locationName ?? 'Unknown',
+                          style: TextStyle(color: color),
+                        )
+                      ),
                     ],
                   ),
                 ],

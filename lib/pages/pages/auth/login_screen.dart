@@ -25,8 +25,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final ThemeState themeController = Get.put(ThemeState());
   final AuthState authController = Get.put(AuthState());
-  TextEditingController usernameController = new TextEditingController();
-  TextEditingController passwordController = new TextEditingController();
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   Future<void> login() async {
     print('เข้าใช้งาน');
@@ -41,6 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
       print(data);
       UserAuth newUser = UserAuth.fromJson({
         ...data['user'],
+        "token": data['access_token'],
         "id": data['user']['_id'],
       });
       authController.save(newUser);

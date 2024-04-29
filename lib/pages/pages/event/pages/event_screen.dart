@@ -126,7 +126,7 @@ class _EventScreenState extends State<EventScreen> {
       final response = await NativeApiService.post("events/create", formData, multipart: true); 
       Map data = response;
       NativeApiService.alert(context,
-        content: 'Event #${data['_id']} created successfully',
+        content: 'Event #${data['event']['_id']} created successfully',
         title: 'Done',
       );
     } on dio.DioException catch (err) {

@@ -1,11 +1,13 @@
 import 'dart:math';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:my_event_flutter/utils/mock/event.dart';
 import 'package:my_event_flutter/utils/models/model_event.dart';
+import 'package:my_event_flutter/utils/services/native_api_service.dart';
+import 'package:my_event_flutter/utils/state/event_state.dart';
 import 'package:my_event_flutter/utils/state/location_state.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../utils/state/auth_state.dart';
@@ -14,6 +16,7 @@ import '../components/button_event.dart';
 import '../components/modal_event.dart';
 
 Type nonNullableTypeOf<T>(T? object) => T;
+
 class EventViewScreen extends StatefulWidget {
   const EventViewScreen({super.key, required this.id});
   final String id;
@@ -26,9 +29,9 @@ class _EventViewScreenState extends State<EventViewScreen> {
   final ThemeState themeController = Get.put(ThemeState());
   final AuthState authController = Get.put(AuthState());
   final LocationState locationController = Get.put(LocationState());
+  final EventState eventController = Get.put(EventState());
   bool _isPageLoading = true;
-  double lat = 13.9166;
-  double lng = 100.5215;
+  bool _isPropLoading = false;
 
   @override
   void initState() {
@@ -51,7 +54,9 @@ class _EventViewScreenState extends State<EventViewScreen> {
     await locationController.load();
     setState(() {
       _isEventFound = true;
-      _event = events.where((element) => (element.id ?? "1") == (widget.id)).first;
+      _event = eventController.events
+          .where((element) => (element.id ?? "1") == (widget.id))
+          .first;
     });
 
     setState(() {
@@ -59,7 +64,7 @@ class _EventViewScreenState extends State<EventViewScreen> {
     });
   }
 
-  double getDistance(LatLng location){
+  double getDistance(LatLng location) {
     var loc2 = locationController.currentLocation.value;
     var p = 0.017453292519943295;
     var c = cos;
@@ -67,29 +72,49 @@ class _EventViewScreenState extends State<EventViewScreen> {
     var lon2 = location.longitude;
     var lat1 = loc2.latitude;
     var lon1 = loc2.longitude;
-    var a = 0.5 - c((lat2 - lat1) * p)/2 + 
-          c(lat1 * p) * c(lat2 * p) * 
-          (1 - c((lon2 - lon1) * p))/2;
+    var a = 0.5 -
+        c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
     return 12742 * asin(sqrt(a));
   }
 
+  EventModel getEvent() {
+    return eventController.events
+        .where((element) => (element.id ?? "1") == (widget.id))
+        .first;
+  }
+
   Future<void> joining() async {
-    showModalBottomSheet(
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
-        // backgroundColor: Colors.white,
-        context: context,
-        isScrollControlled: true,
-        builder: (context) => ModalEvent(
-          lat: lat,
-          lng: lng,
-        ));
+    try {
+      showModalBottomSheet(
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
+          context: context,
+          isScrollControlled: true,
+          builder: (context) => ModalEvent(
+                lat: getEvent().location!.latitude,
+                lng: getEvent().location!.longitude,
+                eventId: getEvent().id!,
+              ));
+    } on DioException catch (err) {
+      NativeApiService.alert(
+        context,
+        content: (err).response!.data['detail'] ?? 'Something went wrong',
+        title: 'Error',
+      );
+    } finally {
+      setState(() {
+        _isPropLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isPageLoading == true) return const Center(child: CircularProgressIndicator());
-    if (_isEventFound == false) return const Center(child: Text('Event not found'));
+    if (_isPageLoading == true)
+      return const Center(child: CircularProgressIndicator());
+    if (_isEventFound == false)
+      return const Center(child: Text('Event not found'));
     return Scaffold(
       body: Container(
         width: MediaQuery.of(context).size.width,
@@ -103,7 +128,8 @@ class _EventViewScreenState extends State<EventViewScreen> {
                 ),
                 image: themeController.isDarkMode.value == true
                     ? const ExactAssetImage('assets/images/bg/login_dark.png')
-                    : const ExactAssetImage('assets/images/bg/login_light.png'))),
+                    : const ExactAssetImage(
+                        'assets/images/bg/login_light.png'))),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -116,14 +142,13 @@ class _EventViewScreenState extends State<EventViewScreen> {
                 child: Container(
                   height: 150,
                   child: Center(
-                    child: Text(
-                      _event.name ?? '',
-                      style: const TextStyle(
+                      child: Text(
+                    _event.name ?? '',
+                    style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.white),
-                    )
-                  ),
+                  )),
                 ),
               ),
             ),
@@ -176,49 +201,47 @@ class _EventViewScreenState extends State<EventViewScreen> {
                                 children: [
                                   Column(
                                     children: [
-                                      if (_event.approved) Row(
-                                        children: [
-                                          Container(
-                                            width: 20,
-                                            height: 20,
-                                            margin:
-                                                const EdgeInsets.only(right: 10),
-                                            child: const Icon(
-                                              Icons.check_circle,
-                                              color: Color(0xff27AE4D),
-                                            )
-                                          ),
-                                          const Flexible(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'ยืนยันแล้ว',
-                                                  maxLines: 3,
-                                                  style: TextStyle(
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                Text(
-                                                  'กิจกรรมนี้เชื่อถือได้ ผ่านการยืนยันจากระบบแล้ว',
-                                                  maxLines: 3,
-                                                  style: TextStyle(),
-                                                ),
-                                              ],
+                                      if (_event.approved)
+                                        Row(
+                                          children: [
+                                            Container(
+                                                width: 20,
+                                                height: 20,
+                                                margin: const EdgeInsets.only(
+                                                    right: 10),
+                                                child: const Icon(
+                                                  Icons.check_circle,
+                                                  color: Color(0xff27AE4D),
+                                                )),
+                                            const Flexible(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'ยืนยันแล้ว',
+                                                    maxLines: 3,
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Text(
+                                                    'กิจกรรมนี้เชื่อถือได้ ผ่านการยืนยันจากระบบแล้ว',
+                                                    maxLines: 3,
+                                                    style: TextStyle(),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
+                                          ],
+                                        ),
                                       const SizedBox(
                                         height: 15,
                                       ),
-                                      Text(
-                                        _event.detail ?? ''
-                                      ),
+                                      Text(_event.description ?? 'N/A'),
                                       const SizedBox(
                                         height: 15,
                                       ),
@@ -233,11 +256,10 @@ class _EventViewScreenState extends State<EventViewScreen> {
                                             size: 15,
                                           ),
                                           Expanded(
-                                            child: Text(
-                                              _event.locationName ?? 'Unknown',
-                                              style: const TextStyle(),
-                                            )
-                                          ),
+                                              child: Text(
+                                            _event.locationName ?? 'Unknown',
+                                            style: const TextStyle(),
+                                          )),
                                         ],
                                       ),
                                       Row(
@@ -275,20 +297,22 @@ class _EventViewScreenState extends State<EventViewScreen> {
                                     borderRadius: 15,
                                     color: Colors.black,
                                     bg: const Color(0xffF0F0F0),
-                                    shadow: const Color.fromARGB(255, 171, 171, 171),
+                                    shadow: const Color.fromARGB(
+                                        255, 171, 171, 171),
                                     text: 'เปิดแผนที่',
                                     onTap: () {
-                                      launchUrl(
-                                          Uri(
-                                            scheme: 'https',
-                                            host: 'www.google.com',
-                                            path: 'maps/search/',
-                                            queryParameters: {
-                                              'api': '1',
-                                              'query': [lat, lng].join(','),
-                                            },
-                                          )
-                                      );
+                                      launchUrl(Uri(
+                                        scheme: 'https',
+                                        host: 'www.google.com',
+                                        path: 'maps/search/',
+                                        queryParameters: {
+                                          'api': '1',
+                                          'query': [
+                                            getEvent().location!.latitude,
+                                            getEvent().location!.longitude
+                                          ].join(','),
+                                        },
+                                      ));
                                     },
                                   ),
                                 ),
@@ -307,7 +331,8 @@ class _EventViewScreenState extends State<EventViewScreen> {
                                     borderRadius: 15,
                                     color: Colors.white,
                                     bg: const Color(0xff274DAE),
-                                    shadow: const Color.fromARGB(255, 29, 58, 130),
+                                    shadow:
+                                        const Color.fromARGB(255, 29, 58, 130),
                                     text: '',
                                     onTap: () {},
                                   ),
@@ -322,9 +347,11 @@ class _EventViewScreenState extends State<EventViewScreen> {
                                     borderRadius: 15,
                                     color: Colors.white,
                                     bg: const Color(0xff27AE4D),
-                                    shadow: const Color.fromARGB(255, 28, 126, 56),
-                                    text: 'ฉันสนใจจะเข้าร่วม',
+                                    shadow:
+                                        const Color.fromARGB(255, 28, 126, 56),
+                                    text: _isPropLoading == true ? 'กำลังโหลด' : 'ฉันสนใจจะเข้าร่วม',
                                     onTap: () {
+                                      if (_isPropLoading == true) return;
                                       joining();
                                     },
                                   ),

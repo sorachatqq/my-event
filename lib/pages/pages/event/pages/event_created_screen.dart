@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import 'package:my_event_flutter/utils/mock/event.dart';
+import 'package:my_event_flutter/utils/state/event_state.dart';
 import 'package:my_event_flutter/utils/state/location_state.dart';
 
 import '../../../../utils/components/event_widget.dart';
@@ -20,6 +20,7 @@ class _EventCreatedScreenState extends State<EventCreatedScreen> {
   bool _isLocationLoading = false;
   final ThemeState themeController = Get.put(ThemeState());
   final LocationState locationController = Get.put(LocationState());
+  final EventState eventController = Get.put(EventState());
 
   @override
   void initState() {
@@ -31,10 +32,12 @@ class _EventCreatedScreenState extends State<EventCreatedScreen> {
   @override
   void dispose() {
     locationController.dispose();
+    eventController.dispose();
     super.dispose();
   }
 
   init() async {
+    await eventController.load();
     getLocation();
   }
 
@@ -127,11 +130,11 @@ class _EventCreatedScreenState extends State<EventCreatedScreen> {
                           ],
                         ),
                         for (int index = 0;
-                            index < events.length;
+                            index < eventController.events.length;
                             index++)
-                            if (events[index].approved != true)
+                            if (eventController.events[index].approved != true)
                           EventWidget(
-                            event: events[index],
+                            event: eventController.events[index],
                             locationController: locationController,
                           ),
                         const Row(
@@ -147,11 +150,11 @@ class _EventCreatedScreenState extends State<EventCreatedScreen> {
                           ],
                         ),
                         for (int index = 0;
-                            index < events.length;
+                            index < eventController.events.length;
                             index++)
-                            if (events[index].approved == true)
+                            if (eventController.events[index].approved == true)
                           EventWidget(
-                            event: events[index],
+                            event: eventController.events[index],
                             locationController: locationController,
                           ),
                       ],

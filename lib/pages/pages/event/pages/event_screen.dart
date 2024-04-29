@@ -34,6 +34,10 @@ class _EventScreenState extends State<EventScreen> {
   File? _selectedImage;
   bool _isPageLoading = false;
 
+  String? _selectedGender;
+  String? _selectedAgeFrom;
+  String? _selectedAgeTo;
+  String? _selectedType;
   int activeStep = 0;
 
   @override
@@ -90,7 +94,17 @@ class _EventScreenState extends State<EventScreen> {
     });
   }
 
-  void createEvent() async {}
+  void createEvent() async {
+    // push to profile screen
+    setState(() {
+      _isPageLoading = true;
+    });
+    await Future.delayed(const Duration(seconds: 1));
+    context.push(context.namedLocation('event-created'));
+    setState(() {
+      _isPageLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -318,9 +332,14 @@ class _EventScreenState extends State<EventScreen> {
                                           onMapReady: () {
                                             _mapController.move(
                                                 LatLng(
-                                                  locationController.currentLocation.value.latitude,
-                                                  locationController.currentLocation.value.longitude
-                                                ),
+                                                    locationController
+                                                        .currentLocation
+                                                        .value
+                                                        .latitude,
+                                                    locationController
+                                                        .currentLocation
+                                                        .value
+                                                        .longitude),
                                                 14);
                                           },
                                           onMapEvent: onMapEvent,
@@ -395,9 +414,18 @@ class _EventScreenState extends State<EventScreen> {
                         if (activeStep == 1)
                           Column(
                             children: [
-                              const SelectEvent(
-                                hintText: 'จำกัดเพศ',
-                              ),
+                              Row(children: [
+                                Expanded(
+                                    child: SelectEvent(
+                                  hintText: 'จำกัดเพศ',
+                                  items: const ["ชาย", "หญิง", "ไม่จำกัด"],
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedGender = value;
+                                    });
+                                  },
+                                ))
+                              ]),
                               const SizedBox(
                                 height: 10,
                               ),
@@ -408,20 +436,32 @@ class _EventScreenState extends State<EventScreen> {
                                   Container(
                                       margin: const EdgeInsets.only(right: 8),
                                       child: const Text('ตั้งแต่')),
-                                  const Expanded(
+                                  Expanded(
                                     flex: 2,
                                     child: SelectEvent(
                                       hintText: 'อายุ',
+                                      items: const ["0", "6", "12", "18", "20"],
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _selectedAgeFrom = value;
+                                        });
+                                      },
                                     ),
                                   ),
                                   Container(
                                       margin: const EdgeInsets.only(
                                           right: 8, left: 8),
                                       child: const Text('ถึง')),
-                                  const Expanded(
+                                  Expanded(
                                     flex: 2,
                                     child: SelectEvent(
                                       hintText: 'อายุ',
+                                      items: const ["20", "60", "100"],
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _selectedAgeTo = value;
+                                        });
+                                      },
                                     ),
                                   ),
                                 ],
@@ -429,9 +469,20 @@ class _EventScreenState extends State<EventScreen> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              const SelectEvent(
-                                hintText: 'ประเภทของอีเว้นท์',
-                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                      child: SelectEvent(
+                                    hintText: 'ประเภทของอีเว้นท์',
+                                    items: const ["ชาย", "หญิง", "ไม่จำกัด"],
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedType = value;
+                                      });
+                                    },
+                                  )),
+                                ],
+                              )
                             ],
                           ),
                         SafeArea(
@@ -458,6 +509,10 @@ class _EventScreenState extends State<EventScreen> {
                                 shadow: const Color.fromARGB(255, 28, 126, 56),
                                 text: activeStep == 0 ? 'ต่อไป' : 'เสร็จสิ้น',
                                 onTap: () {
+                                  if (activeStep >= 1) {
+                                    createEvent();
+                                    return;
+                                  }
                                   setState(() {
                                     activeStep = 1;
                                   });

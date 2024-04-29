@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_event_flutter/utils/mock/event.dart';
 import 'package:my_event_flutter/utils/state/location_state.dart';
 
 import '../../../../utils/components/event_widget.dart';
@@ -19,61 +20,6 @@ class _EventCreatedScreenState extends State<EventCreatedScreen> {
   bool _isLocationLoading = false;
   final ThemeState themeController = Get.put(ThemeState());
   final LocationState locationController = Get.put(LocationState());
-  List<EventModel> waitingEvents = [
-    EventModel(
-        id: "1",
-        name: 'งานมหกรรมหนังสือ',
-        detail:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
-        verify: false,
-        booking: false),
-    EventModel(
-        id: "2",
-        name: 'งานดนตรี ครั้งที่ 999',
-        detail:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
-        verify: false,
-        booking: false),
-    EventModel(
-        id: "3",
-        name: 'Motor Show',
-        detail:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
-        verify: false,
-        booking: false),
-  ];
-  List<EventModel> pendingEvents = [
-    EventModel(
-        id: "4",
-        name: 'Thailand Game Show',
-        detail:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
-        verify: false,
-        booking: false),
-    EventModel(
-        id: "5",
-        name: 'Apple WWDC24',
-        detail:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
-        verify: false,
-        booking: false),
-  ];
-  List<EventModel> successEvents = [
-    EventModel(
-        id: "6",
-        name: 'FinTech X 88Sandbox',
-        detail:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
-        verify: false,
-        booking: false),
-    EventModel(
-        id: "7",
-        name: 'Food Festival',
-        detail:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum luctus erat vel velit euismod dictum.',
-        verify: false,
-        booking: false),
-  ];
 
   @override
   void initState() {
@@ -122,8 +68,8 @@ class _EventCreatedScreenState extends State<EventCreatedScreen> {
                           context.pop();
                         },
                         child: Container(
-                          margin: EdgeInsets.only(right: 16),
-                          child: CircleAvatar(
+                          margin: const EdgeInsets.only(right: 16),
+                          child: const CircleAvatar(
                             radius: 25,
                             backgroundColor: Color(0xffD9D9D9),
                             child: Text(
@@ -141,7 +87,7 @@ class _EventCreatedScreenState extends State<EventCreatedScreen> {
                           themeController
                               .switchTheme(!themeController.isDarkMode.value);
                         },
-                        child: Text(
+                        child: const Text(
                           'อีเว้นท์ที่ฉันสร้าง',
                           style: TextStyle(
                               fontSize: 30, fontWeight: FontWeight.bold),
@@ -149,7 +95,7 @@ class _EventCreatedScreenState extends State<EventCreatedScreen> {
                       )
                     ],
                   ),
-                  SizedBox(height: 10,)
+                  const SizedBox(height: 10,)
                 ],
               ),
             ),
@@ -167,40 +113,8 @@ class _EventCreatedScreenState extends State<EventCreatedScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                'รอการยืนยัน',
-                                style: TextStyle(
-                                    fontSize: 24, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 15,
-                            ),
-                            Expanded(
-                              child: ButtonHome(
-                                icons: Icons.filter_alt,
-                                borderRadius: 10,
-                                bg: Color(0xff797979),
-                                shadow: Color.fromARGB(255, 82, 82, 82),
-                                fontSize: 16,
-                                text: 'ตัวกรอง',
-                                onTap: () {},
-                              ),
-                            ),
-                          ],
-                        ),
-                        for (int index = 0;
-                            index < waitingEvents.length;
-                            index++)
-                          EventWidget(
-                            event: waitingEvents[index],
-                            locationController: locationController,
-                          ),
-                        Row(
+                        
+                        const Row(
                           children: [
                             Expanded(
                               flex: 2,
@@ -213,13 +127,14 @@ class _EventCreatedScreenState extends State<EventCreatedScreen> {
                           ],
                         ),
                         for (int index = 0;
-                            index < pendingEvents.length;
+                            index < events.length;
                             index++)
+                            if (events[index].verify != true)
                           EventWidget(
-                            event: pendingEvents[index],
+                            event: events[index],
                             locationController: locationController,
                           ),
-                        Row(
+                        const Row(
                           children: [
                             Expanded(
                               flex: 2,
@@ -232,10 +147,11 @@ class _EventCreatedScreenState extends State<EventCreatedScreen> {
                           ],
                         ),
                         for (int index = 0;
-                            index < successEvents.length;
+                            index < events.length;
                             index++)
+                            if (events[index].verify == true)
                           EventWidget(
-                            event: successEvents[index],
+                            event: events[index],
                             locationController: locationController,
                           ),
                       ],

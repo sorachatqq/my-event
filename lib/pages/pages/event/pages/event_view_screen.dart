@@ -176,7 +176,7 @@ class _EventViewScreenState extends State<EventViewScreen> {
                                 children: [
                                   Column(
                                     children: [
-                                      if (_event.verify) Row(
+                                      if (_event.approved) Row(
                                         children: [
                                           Container(
                                             width: 20,

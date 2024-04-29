@@ -129,7 +129,7 @@ class _EventCreatedScreenState extends State<EventCreatedScreen> {
                         for (int index = 0;
                             index < events.length;
                             index++)
-                            if (events[index].verify != true)
+                            if (events[index].approved != true)
                           EventWidget(
                             event: events[index],
                             locationController: locationController,
@@ -149,7 +149,7 @@ class _EventCreatedScreenState extends State<EventCreatedScreen> {
                         for (int index = 0;
                             index < events.length;
                             index++)
-                            if (events[index].verify == true)
+                            if (events[index].approved == true)
                           EventWidget(
                             event: events[index],
                             locationController: locationController,

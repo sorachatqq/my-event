@@ -65,12 +65,12 @@ class EventWidget extends StatelessWidget {
                               fontWeight: FontWeight.bold),
                         ),
                       ),
-                      if (event.verify)
+                      if (event.approved)
                         const Icon(
                           Icons.check_circle,
                           color: Color(0xff27AE4D),
                         ),
-                      if (event.booking)
+                      if (event.isRegistered)
                         Container(
                           decoration: const BoxDecoration(
                             color: Color(0xff27AE4D),

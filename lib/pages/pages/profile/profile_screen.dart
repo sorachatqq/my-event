@@ -220,7 +220,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ],
                         ),
-                        for (int index = 0; index < events.where((element) => element.booking).length; index++)
+                        for (int index = 0; index < events.where((element) => element.isRegistered).length; index++)
                           EventWidget(
                             event: events[index],
                             color: Colors.black,

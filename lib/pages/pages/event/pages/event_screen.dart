@@ -511,7 +511,7 @@ class _EventScreenState extends State<EventScreen> {
                                   Expanded(
                                       child: SelectEvent(
                                     hintText: 'ประเภทของอีเว้นท์',
-                                    items: events.map((e) => e.category!).toSet().toList(),
+                                    items: events.map((e) => e.type!).toSet().toList(),
                                     onChanged: (value) {
                                       setState(() {
                                         _selectedType = value;

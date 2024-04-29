@@ -19,6 +19,7 @@ class EventState extends GetxController {
     events.clear();
     final response = await NativeApiService.get("events");
     Map data = response;
+    print('data: $data');
     List<EventModel> loadEvents = List<EventModel>.from(data['data'].map((x) => EventModel.fromJson(x)));
     events.addAll(loadEvents);
   }

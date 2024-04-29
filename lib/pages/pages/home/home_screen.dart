@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_event_flutter/pages/pages/home/components/select_event.dart';
-import 'package:my_event_flutter/utils/mock/event.dart';
+import 'package:my_event_flutter/utils/state/event_state.dart';
 import '../../../utils/models/model_event.dart';
 import '../../../utils/state/location_state.dart';
 import '../../../utils/state/theme_state.dart';
@@ -18,12 +18,15 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _isLocationLoading = false;
+  bool _isEventLoading = false;
   final ThemeState themeController = Get.put(ThemeState());
   final LocationState locationController = Get.put(LocationState());
+  final EventState eventController = Get.put(EventState());
   String selectedCategory = 'ทั้งหมด';
 
   @override
   void initState() {
+    _isEventLoading = false;
     _isLocationLoading = false;
     super.initState();
     init();
@@ -32,11 +35,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     locationController.dispose();
+    eventController.dispose();
     super.dispose();
   }
 
   init() async {
     getLocation();
+    loadEvent();
   }
 
   Future<void> getLocation() async {
@@ -49,12 +54,21 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Future<void> loadEvent() async {
+    setState(() {
+      _isEventLoading = true;
+    });
+    await eventController.load();
+    setState(() {
+      _isEventLoading = false;
+    });
+  }
+
   List<EventWidget> getEvents () {
-    return events.where((element) =>
+    return eventController.events.where((element) =>
       (
-        selectedCategory != null &&
         selectedCategory != "ทั้งหมด" &&
-        element.category == selectedCategory
+        element.type == selectedCategory
       ) || selectedCategory == "ทั้งหมด"
     ).map((e) => EventWidget(
       event: e,
@@ -141,13 +155,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         //   text: 'ค้นหาตามหมวดหมู่',
                         //   onTap: () {},
                         // ),
-                        child: SelectFilter(
+                        child: _isEventLoading ? const Text("Loading...") : SelectFilter(
                             hintText: 'ค้นหาตามหมวดหมู่',
                             items: const ["ทั้งหมด"].toList() +
-                                (events
+                                (eventController.events
                                     .where(
-                                        (element) => element.category != null)
-                                    .map((e) => e.category ?? 'Unknown')
+                                        (element) => element.type != null)
+                                    .map((e) => e.type ?? 'Unknown')
                                     .toSet()
                                     .toList()),
                             value: selectedCategory,

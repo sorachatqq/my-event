@@ -44,7 +44,10 @@ class NativeApiService {
 
     try {
       final response =
-          await dio.get(getApi() + url, options: Options(headers: headers));
+          await dio.get(getApi() + url, options: Options(
+            contentType: Headers.jsonContentType,
+            headers: headers
+          ));
       print(response.data);
       if (response.statusCode == 401) {
         await authController.remove();

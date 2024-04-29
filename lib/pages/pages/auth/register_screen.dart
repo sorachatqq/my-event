@@ -47,6 +47,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         "gender": gender,
         "age": age,
         "interest_thing": interestingController.text.trim(),
+        "role": "user"
       };
       final res = await NativeApiService.post("signup", obj);
       Map data = res;

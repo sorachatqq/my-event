@@ -3,53 +3,52 @@ import 'package:latlong2/latlong.dart';
 
 class EventModel {
   final String? id;
-  final String? image;
+  final String? picture;
   final String? name;
   final String? detail;
-  final bool verify;
-  final bool booking;
+  final bool approved;
+  final bool isRegistered;
   final LatLng? location;
   final int? gender;
   final List? age;
-  final int? type;
+  final String? type;
   final String? startedAt;
   final String? locationName;
-  final String? category;
+  final String? registrationCode;
 
   EventModel({
     this.id,
-    this.image = '',
+    this.picture = '',
     this.name,
     this.detail,
-    this.verify = false,
-    this.booking = false,
+    this.approved = false,
+    this.isRegistered = false,
     this.location,
     this.gender,
     this.age,
     this.type,
     this.startedAt,
     this.locationName,
-    this.category
+    this.registrationCode,
   });
 
   factory EventModel.fromJson(Map json) {
     Map item = json;
     List age = [];
-    bool verify = false;
-    bool booking = false;
     LatLng location = const LatLng(0, 0);
     return EventModel(
       id: item['id'],
+      picture: item['picture'],
       name: item['name'],
       detail: item['detail'],
-      verify: verify,
-      booking: booking,
+      approved: item['approved'],
+      isRegistered: item['is_registered'],
       location: location,
       gender: item['gender'],
       age: age,
       type: item['type'],
       startedAt: item['started_at'],
-      category: item['category'],
+      registrationCode: item['registration_code'],
     );
   }
 
@@ -60,6 +59,7 @@ class EventModel {
 
   Map<String, dynamic> toJson() => {
         "id": id,
+        "picture": picture,
         "name": name,
         "detail": detail,
         "location": location,
@@ -68,6 +68,7 @@ class EventModel {
         "type": type,
         "started_at": startedAt,
         "location_name": locationName,
-        "category": category
+        "is_registered": isRegistered,
+        "registration_code": registrationCode,
       };
 }

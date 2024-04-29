@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -31,8 +31,11 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> login() async {
     print('เข้าใช้งาน');
     try {
-      String obj = "username=${usernameController.text.trim()}&password=${passwordController.text.trim()}";
-      final res = await NativeApiService.post("token", obj, formEncoded: true);
+      dio.FormData obj = dio.FormData.fromMap({
+        "username": usernameController.text.trim(),
+        "password": passwordController.text.trim(),
+      });
+      final res = await NativeApiService.post("token", obj);
       Map data = res;
 
       print(data);
@@ -42,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
       authController.save(newUser);
       context.go(context.namedLocation('home'));
-    } on DioException catch (err) {
+    } on dio.DioException catch (err) {
       NativeApiService.alert(context,
         content: (err).response!.data['detail'] ?? 'Something went wrong',
         title: 'Error',

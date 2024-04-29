@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:my_event_flutter/utils/mock/event.dart';
 import 'package:my_event_flutter/utils/services/native_api_service.dart';
 import 'package:my_event_flutter/utils/state/location_state.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -93,7 +94,7 @@ class _EventScreenState extends State<EventScreen> {
   void pickAnImage() async {
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image == null) return;
-    Uint8List imageBytes = await (_selectedImage ?? XFile('img.png')).readAsBytes();
+    Uint8List imageBytes = await (image).readAsBytes();
     setState(() {
       _selectedImage = XFile(image.path);
       _selectedImageBytes = imageBytes;
@@ -108,7 +109,10 @@ class _EventScreenState extends State<EventScreen> {
     await Future.delayed(const Duration(seconds: 1));
 
     try {
-      dio.MultipartFile file = dio.MultipartFile.fromBytes(_selectedImageBytes!);
+      dio.MultipartFile file = dio.MultipartFile.fromBytes(
+        _selectedImageBytes!,
+        filename: _selectedImage!.path.split('/').last,
+      );
       dio.FormData formData = dio.FormData.fromMap({
         "name": nameController.text,
         "description": detailController.text,
@@ -507,7 +511,7 @@ class _EventScreenState extends State<EventScreen> {
                                   Expanded(
                                       child: SelectEvent(
                                     hintText: 'ประเภทของอีเว้นท์',
-                                    items: const ["ชาย", "หญิง", "ไม่จำกัด"],
+                                    items: events.map((e) => e.category!).toSet().toList(),
                                     onChanged: (value) {
                                       setState(() {
                                         _selectedType = value;

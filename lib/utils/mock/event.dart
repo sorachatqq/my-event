@@ -11,7 +11,8 @@ List<EventModel> events = [
         verify: true,
         booking: true,
         startedAt: '2019-07-08T10:37:28Z',
-        locationName: 'สวนลุมพินี'),
+        locationName: 'สวนลุมพินี',
+        category: "Book"),
     EventModel(
         id: "2",
         name: 'งานดนตรี ครั้งที่ 999',
@@ -20,7 +21,8 @@ List<EventModel> events = [
         verify: false,
         booking: false,
         startedAt: '2019-07-08T10:37:28Z',
-        locationName: 'สวนลุมพินี'),
+        locationName: 'สวนลุมพินี',
+        category: "Music"),
     EventModel(
         id: "3",
         name: 'Motor Show',
@@ -29,7 +31,8 @@ List<EventModel> events = [
         verify: true,
         booking: false,
         startedAt: '2019-07-08T10:37:28Z',
-        locationName: 'สวนลุมพินี'),
+        locationName: 'สวนลุมพินี',
+        category: "Car"),
     EventModel(
         id: "4",
         name: 'Thailand Game Show',
@@ -38,7 +41,8 @@ List<EventModel> events = [
         verify: true,
         booking: false,
         startedAt: '2019-07-08T10:37:28Z',
-        locationName: 'สวนลุมพินี'),
+        locationName: 'สวนลุมพินี',
+        category: "Game"),
     EventModel(
         id: "5",
         name: 'Apple WWDC24',
@@ -47,7 +51,8 @@ List<EventModel> events = [
         verify: false,
         booking: false,
         startedAt: '2019-07-08T10:37:28Z',
-        locationName: 'สวนลุมพินี'),
+        locationName: 'สวนลุมพินี',
+        category: "Tech"),
     EventModel(
         id: "6",
         name: 'FinTech X 88Sandbox',
@@ -56,7 +61,8 @@ List<EventModel> events = [
         verify: true,
         booking: false,
         startedAt: '2019-07-08T10:37:28Z',
-        locationName: 'สวนลุมพินี'),
+        locationName: 'สวนลุมพินี',
+        category: "Tech"),
     EventModel(
         id: "7",
         name: 'Food Festival',
@@ -65,5 +71,6 @@ List<EventModel> events = [
         verify: false,
         booking: false,
         startedAt: '2019-07-08T10:37:28Z',
-        locationName: 'สวนลุมพินี'),
+        locationName: 'สวนลุมพินี',
+        category: "Food"),
   ];

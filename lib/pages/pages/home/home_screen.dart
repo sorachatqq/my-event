@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_event_flutter/pages/pages/home/components/select_event.dart';
 import 'package:my_event_flutter/utils/mock/event.dart';
 import '../../../utils/models/model_event.dart';
 import '../../../utils/state/location_state.dart';
@@ -19,7 +20,8 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isLocationLoading = false;
   final ThemeState themeController = Get.put(ThemeState());
   final LocationState locationController = Get.put(LocationState());
-  
+  String selectedCategory = 'ทั้งหมด';
+
   @override
   void initState() {
     _isLocationLoading = false;
@@ -45,6 +47,19 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _isLocationLoading = false;
     });
+  }
+
+  List<EventWidget> getEvents () {
+    return events.where((element) =>
+      (
+        selectedCategory != null &&
+        selectedCategory != "ทั้งหมด" &&
+        element.category == selectedCategory
+      ) || selectedCategory == "ทั้งหมด"
+    ).map((e) => EventWidget(
+      event: e,
+      locationController: locationController,
+    )).toList();
   }
 
   @override
@@ -118,14 +133,30 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Expanded(
                         flex: 2,
-                        child: ButtonHome(
-                          icons: Icons.filter_alt,
-                          borderRadius: 10,
-                          bg: const Color(0xff797979),
-                          shadow: const Color.fromARGB(255, 82, 82, 82),
-                          text: 'ค้นหาตามหมวดหมู่',
-                          onTap: () {},
-                        ),
+                        // child: ButtonHome(
+                        //   icons: Icons.filter_alt,
+                        //   borderRadius: 10,
+                        //   bg: const Color(0xff797979),
+                        //   shadow: const Color.fromARGB(255, 82, 82, 82),
+                        //   text: 'ค้นหาตามหมวดหมู่',
+                        //   onTap: () {},
+                        // ),
+                        child: SelectFilter(
+                            hintText: 'ค้นหาตามหมวดหมู่',
+                            items: const ["ทั้งหมด"].toList() +
+                                (events
+                                    .where(
+                                        (element) => element.category != null)
+                                    .map((e) => e.category ?? 'Unknown')
+                                    .toSet()
+                                    .toList()),
+                            value: selectedCategory,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedCategory = value ?? 'ทั้งหมด';
+                              });
+                              print('selected category: $value');
+                            }),
                       ),
                       const SizedBox(
                         width: 15,
@@ -184,15 +215,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     constraints:
                         BoxConstraints(minHeight: constraints.maxHeight),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        for (int index = 0; index < events.length; index++)
-                          EventWidget(
-                            event: events[index],
-                            locationController: locationController,
-                          ),
-                      ],
-                    ),
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: getEvents(),
+                    )
                   )),
                 ),
               ),

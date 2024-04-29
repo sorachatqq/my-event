@@ -14,6 +14,7 @@ class EventModel {
   final int? type;
   final String? startedAt;
   final String? locationName;
+  final String? category;
 
   EventModel({
     this.id,
@@ -28,6 +29,7 @@ class EventModel {
     this.type,
     this.startedAt,
     this.locationName,
+    this.category
   });
 
   factory EventModel.fromJson(Map json) {
@@ -47,6 +49,7 @@ class EventModel {
       age: age,
       type: item['type'],
       startedAt: item['started_at'],
+      category: item['category'],
     );
   }
 
@@ -65,5 +68,6 @@ class EventModel {
         "type": type,
         "started_at": startedAt,
         "location_name": locationName,
+        "category": category
       };
 }

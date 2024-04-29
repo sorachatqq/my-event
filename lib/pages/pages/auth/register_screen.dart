@@ -43,6 +43,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         "email": emailController.text.trim(),
         "password": passwordController.text.trim(),
         "repeat_password": cPasswordController.text.trim(),
+        "full_name": usernameController.text.trim(),
         "gender": gender,
         "age": age,
         "interest_thing": interestingController.text.trim(),

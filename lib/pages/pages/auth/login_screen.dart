@@ -31,10 +31,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> login() async {
     print('เข้าใช้งาน');
     try {
-      // Map<String, String> obj = {
-      //   "username": usernameController.text.trim(),
-      //   "password": passwordController.text.trim(),
-      // };
       String obj = "username=${usernameController.text.trim()}&password=${passwordController.text.trim()}";
       final res = await NativeApiService.post("token", obj, formEncoded: true);
       Map data = res;

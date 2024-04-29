@@ -1,6 +1,7 @@
 import 'dart:io';
+import 'dart:typed_data';
 
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as dio;
 import 'package:easy_stepper/easy_stepper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -33,7 +34,8 @@ class _EventScreenState extends State<EventScreen> {
   TextEditingController detailController = TextEditingController();
   final LocationState locationController = Get.put(LocationState());
   late final MapController _mapController;
-  File? _selectedImage;
+  XFile? _selectedImage;
+  Uint8List? _selectedImageBytes;
   bool _isPageLoading = false;
 
   String? _selectedGender;
@@ -91,12 +93,14 @@ class _EventScreenState extends State<EventScreen> {
   void pickAnImage() async {
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image == null) return;
+    Uint8List imageBytes = await (_selectedImage ?? XFile('img.png')).readAsBytes();
     setState(() {
-      _selectedImage = File(image.path);
+      _selectedImage = XFile(image.path);
+      _selectedImageBytes = imageBytes;
     });
   }
 
-  void createEvent() async {
+  Future<void> createEvent() async {
     // push to profile screen
     setState(() {
       _isPageLoading = true;
@@ -104,7 +108,8 @@ class _EventScreenState extends State<EventScreen> {
     await Future.delayed(const Duration(seconds: 1));
 
     try {
-      final response = await NativeApiService.post("events/create", {
+      dio.MultipartFile file = dio.MultipartFile.fromBytes(_selectedImageBytes!);
+      dio.FormData formData = dio.FormData.fromMap({
         "name": nameController.text,
         "description": detailController.text,
         "latitude": locationController.currentLocation.value.latitude,
@@ -112,14 +117,15 @@ class _EventScreenState extends State<EventScreen> {
         "age_range_min": _selectedAgeFrom,
         "age_range_max": _selectedAgeTo,
         "type": _selectedType,
-        "picture": _selectedImage,
-      }); 
+        "picture": file,
+      });
+      final response = await NativeApiService.post("events/create", formData, multipart: true); 
       Map data = response;
       NativeApiService.alert(context,
         content: 'Event #${data['_id']} created successfully',
         title: 'Done',
       );
-    } on DioException catch (err) {
+    } on dio.DioException catch (err) {
       NativeApiService.alert(
         context,
         content: (err).response!.data['detail'] ?? 'Something went wrong',
@@ -304,7 +310,7 @@ class _EventScreenState extends State<EventScreen> {
                                           ),
                                         ),
                                       ))
-                                  : Image.file(_selectedImage ?? File('')),
+                                  : Image.memory(_selectedImageBytes!),
                               const SizedBox(
                                 height: 10,
                               ),

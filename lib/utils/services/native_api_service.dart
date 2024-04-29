@@ -65,7 +65,7 @@ class NativeApiService {
     }
   }
 
-  static post(String url, Object data, {bool formEncoded = false}) async {
+  static post(String url, Object data, {bool formEncoded = false, bool multipart = false}) async {
     final AuthState authController = Get.put(AuthState());
     Map<String, String> headers = getHeaders();
 
@@ -77,7 +77,7 @@ class NativeApiService {
       final response = await dio.post(getApi() + url,
           data: data,
           options: Options(
-            contentType: formEncoded ? Headers.formUrlEncodedContentType : Headers.jsonContentType,
+            contentType: formEncoded ? Headers.formUrlEncodedContentType : (multipart ? Headers.multipartFormDataContentType : Headers.jsonContentType),
             headers: headers,
           ),
         );

@@ -35,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
         "username": usernameController.text.trim(),
         "password": passwordController.text.trim(),
       });
-      final res = await NativeApiService.post("token", obj);
+      final res = await NativeApiService.post("token", obj, formEncoded: true);
       Map data = res;
 
       print(data);

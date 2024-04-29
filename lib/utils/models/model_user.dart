@@ -2,19 +2,19 @@ class UserAuth {
   final String? id;
   final String? email;
   final String? username;
-  final String? firstname;
-  final String? lastname;
+  final String? fullName;
   final String? token;
   final String? image;
+  final String? role;
 
   UserAuth({
     this.id,
     this.email,
     this.username,
-    this.firstname,
-    this.lastname,
+    this.fullName,
     this.token,
     this.image,
+    this.role,
   });
 
   factory UserAuth.fromJson(Map<String, dynamic> json) {
@@ -24,10 +24,10 @@ class UserAuth {
       id: item['id'],
       email: item['email'],
       username: item['username'],
-      firstname: item['firstname'],
-      lastname: item['lastname'],
+      fullName: item['full_name'],
       token: item['token'],
       image: item['image'],
+      role: item['role'],
     );
   }
 
@@ -35,9 +35,9 @@ class UserAuth {
         "id": id,
         "email": email,
         "username": username,
-        "firstname": firstname,
-        "lastname": lastname,
+        "full_name": fullName,
         "token": token,
         "image": image,
+        "role": role,
       };
 }

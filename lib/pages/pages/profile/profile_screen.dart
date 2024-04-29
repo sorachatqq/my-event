@@ -120,7 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '${authController.user.value.firstname} ${authController.user.value.lastname}',
+                      authController.user.value.fullName ?? 'Unknown',
                       style:
                           const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),

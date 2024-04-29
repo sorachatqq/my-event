@@ -21,16 +21,14 @@ class AuthState extends GetxController {
     String? id = prefs.getString('id');
     String? email = prefs.getString('email');
     String? username = prefs.getString('username');
-    String? firstname = prefs.getString('firstname');
-    String? lastname = prefs.getString('lastname');
+    String? fullName = prefs.getString('full_name');
     String? token = prefs.getString('token');
     String? image = prefs.getString('image');
     UserAuth loadAuth = UserAuth(
       id: id,
       email: email,
       username: username,
-      firstname: firstname,
-      lastname: lastname,
+      fullName: fullName,
       token: token,
       image: image,
     );
@@ -42,8 +40,7 @@ class AuthState extends GetxController {
     await prefs.setString('id', newUser.id.toString());
     await prefs.setString('email', newUser.email.toString());
     await prefs.setString('username', newUser.username.toString());
-    await prefs.setString('firstname', newUser.firstname.toString());
-    await prefs.setString('lastname', newUser.lastname.toString());
+    await prefs.setString('full_name', newUser.fullName.toString());
     await prefs.setString('token', newUser.token.toString());
     await prefs.setString('image', newUser.image.toString());
     user.value = newUser;
@@ -52,14 +49,12 @@ class AuthState extends GetxController {
   Future<void> edit(UserAuth newUser) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('email', newUser.email.toString());
-    await prefs.setString('firstname', newUser.firstname.toString());
-    await prefs.setString('lastname', newUser.lastname.toString());
+    await prefs.setString('full_name', newUser.fullName.toString());
     user.value = UserAuth(
       id: user.value.id,
       email: newUser.email,
       username: user.value.username,
-      firstname: newUser.firstname,
-      lastname: newUser.lastname,
+      fullName: newUser.fullName,
       token: user.value.token,
       image: newUser.image,
     );
@@ -70,8 +65,7 @@ class AuthState extends GetxController {
     await prefs.remove('id');
     await prefs.remove('email');
     await prefs.remove('username');
-    await prefs.remove('firstname');
-    await prefs.remove('lastname');
+    await prefs.remove('full_name');
     await prefs.remove('token');
     await prefs.remove('image');
 
@@ -79,8 +73,7 @@ class AuthState extends GetxController {
       id: null,
       email: null,
       username: null,
-      firstname: null,
-      lastname: null,
+      fullName: null,
       token: null,
       image: null,
     );

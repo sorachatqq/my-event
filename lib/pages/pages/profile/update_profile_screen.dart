@@ -79,17 +79,9 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                   const Text('ชื่อจริง'),
                   TextField(
                     controller: TextEditingController(
-                        text: authController.user.value.firstname),
+                        text: authController.user.value.fullName),
                     onChanged: (value) {
-                      updateUser("firstname", value);
-                    },
-                  ),
-                  const Text('นามสกุล'),
-                  TextField(
-                    controller: TextEditingController(
-                        text: authController.user.value.lastname),
-                    onChanged: (value) {
-                      updateUser("lastname", value);
+                      updateUser("full_name", value);
                     },
                   ),
                   const SizedBox(height: 20),

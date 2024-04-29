@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:dio/dio.dart';
@@ -10,19 +11,19 @@ final dio = Dio();
 class NativeApiService {
   static bool appDev = kDebugMode;
 
-  static String serverDev = "127.0.0.1";
+  static String serverDev = "localhost";
 
   static String getHost() {
     if (appDev) {
-      return "http://$serverDev:24101";
+      return "http://$serverDev:8080";
     } else {
-      return "https://$serverDev:24101";
+      return "https://$serverDev:8080";
     }
   }
 
   static Map<String, String> getHeaders() {
     return {
-      'Content-Type': 'application/json;charset=UTF-8',
+      'Content-Type': 'application/json',
       'Accept': 'application/json',
       'Charset': 'utf-8',
     };
@@ -30,7 +31,7 @@ class NativeApiService {
 
   static String getApi() {
     String apiHost = getHost();
-    return "$apiHost/api/";
+    return "$apiHost/";
   }
 
   static get(String url) async {
@@ -51,20 +52,20 @@ class NativeApiService {
       return response.data;
     } on DioException catch (e) {
       if (e.response != null) {
-        print(e.response!.data);
-        print(e.response!.headers);
-        print(e.response!.requestOptions);
+        print(
+            '${e.requestOptions.method} ${e.requestOptions.path} ${e.requestOptions.data}');
+        print('(${e.response!.statusCode}) ${e.response!.data}');
         return e.response;
       } else {
-        print(e.requestOptions);
-        print(e.message);
-        print(e.response);
+        print(
+            '${e.requestOptions.method} ${e.requestOptions.path} ${e.requestOptions.data}');
+        print('(${e.response!.statusCode}) ${e.response!.data}');
         return e.response;
       }
     }
   }
 
-  static post(String url, Map data) async {
+  static post(String url, Object data, {bool formEncoded = false}) async {
     final AuthState authController = Get.put(AuthState());
     Map<String, String> headers = getHeaders();
 
@@ -74,23 +75,31 @@ class NativeApiService {
 
     try {
       final response = await dio.post(getApi() + url,
-          data: data, options: Options(headers: headers));
-      print(response.data);
+          data: data,
+          options: Options(
+            contentType: formEncoded ? Headers.formUrlEncodedContentType : Headers.jsonContentType,
+            headers: headers,
+          ),
+        );
+      print('Payload: ${response.data}');
       if (response.statusCode == 401) {
         await authController.remove();
       }
       return response.data;
     } on DioException catch (e) {
       if (e.response != null) {
+        print('Empty response');
         print(e.response!.data);
         print(e.response!.headers);
         print(e.response!.requestOptions);
-        return e.response;
+        throw e;
       } else {
-        print(e.requestOptions);
+        print('Exception');
+        print(
+            '${e.requestOptions.method} ${e.requestOptions.path} ${e.requestOptions.data}');
         print(e.message);
         print(e.response);
-        return e.response;
+        throw e;
       }
     }
   }
@@ -186,5 +195,26 @@ class NativeApiService {
         return e.response;
       }
     }
+  }
+
+  static alert(
+    BuildContext context, {
+    required String content,
+    required String title,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: [
+          ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Ok'))
+        ],
+      ),
+    );
   }
 }

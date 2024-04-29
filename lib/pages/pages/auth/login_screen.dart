@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -30,27 +31,26 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> login() async {
     print('เข้าใช้งาน');
     try {
-      // Map obj = {
+      // Map<String, String> obj = {
       //   "username": usernameController.text.trim(),
       //   "password": passwordController.text.trim(),
-      //   "rememberMe": false
       // };
-      // final res = await NativeApiService.post("auth/login", obj);
-      // Map data = res;
+      String obj = "username=${usernameController.text.trim()}&password=${passwordController.text.trim()}";
+      final res = await NativeApiService.post("token", obj, formEncoded: true);
+      Map data = res;
 
+      print(data);
       UserAuth newUser = UserAuth.fromJson({
-        "id": "1",
-        "email": "yyy@xxx.com",
-        "username": "username",
-        "firstname": "สมชาย",
-        "lastname": "เข็มกลัด",
-        "token": "1",
-        "image": "",
+        ...data['user'],
+        "id": data['user']['_id'],
       });
       authController.save(newUser);
       context.go(context.namedLocation('home'));
-    } catch (err) {
-      print(err);
+    } on DioException catch (err) {
+      NativeApiService.alert(context,
+        content: (err).response!.data['detail'] ?? 'Something went wrong',
+        title: 'Error',
+      );
     }
   }
 

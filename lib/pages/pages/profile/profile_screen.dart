@@ -39,6 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   init() async {
+    authController.load();
     getLocation();
   }
 
@@ -144,7 +145,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   bg: const Color(0xff27AE4D),
                   shadow: const Color.fromARGB(255, 28, 126, 56),
                   text: 'แก้ไขโปรไฟล์',
-                  onTap: () {},
+                  onTap: () {
+                    context.push(context.namedLocation('update-profile'));
+                  },
                 ),
                 const SizedBox(
                   height: 10,

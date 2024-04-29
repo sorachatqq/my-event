@@ -17,7 +17,7 @@ class UserAuth {
     this.image,
   });
 
-  factory UserAuth.fromJson(Map json) {
+  factory UserAuth.fromJson(Map<String, dynamic> json) {
     Map item = json;
 
     return UserAuth(

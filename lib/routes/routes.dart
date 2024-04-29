@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_event_flutter/pages/pages/auth/login_screen.dart';
+import 'package:my_event_flutter/pages/pages/profile/update_profile_screen.dart';
 
 import '../pages/pages/auth/register_screen.dart';
 import '../pages/pages/event/pages/event_created_screen.dart';
@@ -149,6 +150,24 @@ class MyRoute {
               return CustomTransitionPage(
                 key: state.pageKey,
                 child: const ProfileScreen(),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(
+                    opacity: CurveTween(curve: Curves.easeInOutCirc)
+                        .animate(animation),
+                    child: child,
+                  );
+                },
+              );
+            },
+          ),
+          GoRoute(
+            path: 'profile/update',
+            name: 'update-profile',
+            pageBuilder: (context, state) {
+              return CustomTransitionPage(
+                key: state.pageKey,
+                child: const UpdateProfileScreen(),
                 transitionsBuilder:
                     (context, animation, secondaryAnimation, child) {
                   return FadeTransition(

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:easy_stepper/easy_stepper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -7,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:my_event_flutter/utils/services/native_api_service.dart';
 import 'package:my_event_flutter/utils/state/location_state.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -100,10 +102,35 @@ class _EventScreenState extends State<EventScreen> {
       _isPageLoading = true;
     });
     await Future.delayed(const Duration(seconds: 1));
-    context.push(context.namedLocation('event-created'));
-    setState(() {
-      _isPageLoading = false;
-    });
+
+    try {
+      final response = await NativeApiService.post("events/create", {
+        "name": nameController.text,
+        "description": detailController.text,
+        "latitude": locationController.currentLocation.value.latitude,
+        "longitude": locationController.currentLocation.value.longitude,
+        "age_range_min": _selectedAgeFrom,
+        "age_range_max": _selectedAgeTo,
+        "type": _selectedType,
+        "picture": _selectedImage,
+      }); 
+      Map data = response;
+      NativeApiService.alert(context,
+        content: 'Event #${data['_id']} created successfully',
+        title: 'Done',
+      );
+    } on DioException catch (err) {
+      NativeApiService.alert(
+        context,
+        content: (err).response!.data['detail'] ?? 'Something went wrong',
+        title: 'Error',
+      );
+    } finally {
+      context.push(context.namedLocation('event-created'));
+      setState(() {
+        _isPageLoading = false;
+      });
+    }
   }
 
   @override
